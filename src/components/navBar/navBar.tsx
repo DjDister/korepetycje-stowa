@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+//import styles from "./navBar.module.css";
+import "../../App.css";
 
 const Name = ["Kornik"];
 const navElem = ["Our Teachers", "Our offer", "About us"];
