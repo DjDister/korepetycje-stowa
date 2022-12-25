@@ -17,11 +17,10 @@
 .subject-container {
     position: relative;
     height: 100%;
-    width: 14%;
+    width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: pink;
 }
 
 
@@ -74,12 +73,18 @@
     font-style: italic;
     font-size: 25px;
     cursor: pointer;
-    padding-top: 15px;
     
 }
 
+.flexBox{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .signing {
-    display: inline-block;
+ 
     color: black;
     font-size: 15px;
     border-style: solid;
@@ -101,11 +106,9 @@
 .dropdown-subjects {
     position: absolute;
     left: 0px;
-    bottom: 0px;
-    right: 21%;
-    top: 14%;
+    top:100%;
+ right: 0px;
     background-color: white;
-    width: 200px;
     border-style: solid;
     border-color: black;
     border-radius: 5px;
