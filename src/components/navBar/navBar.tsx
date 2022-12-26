@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styles from "./navbar.module.css";
+import "../../App.css";
+
 const Name = ["Kornik"];
 const navElem = ["Our Teachers", "Our offer", "About us"];
 const sub = ["Subjects"];
@@ -20,14 +22,16 @@ function NavBar() {
       <div className={styles.insideMain}>
         <div className={styles.flexBox}>
           {Name.map((name) => (
-            <div className="logo-Name">{name}</div>
+            <div className={styles.logoName}>{name}</div>
           ))}
         </div>
-        <div className="navBlocksCont">
+        <div className={styles.navBlocksCont}>
           {navElem.map((elem, index) => (
             <div
               key={index}
-              className={`navBlocks ${status === index ? "underlined" : ""}`}
+              className={`${styles.navBlocks} ${
+                status === index ? styles.underlinded : null
+              }`}
               onMouseEnter={() => setStatus(index)}
               onMouseLeave={() => setStatus(undefined)}
             >
@@ -37,7 +41,7 @@ function NavBar() {
         </div>
 
         <div
-          className="subject-container"
+          className={styles.subjectContainer}
           onMouseEnter={() => {
             setOpen(true);
           }}
@@ -46,20 +50,24 @@ function NavBar() {
           }}
         >
           {sub.map((subj) => (
-            <div className="subjects">{subj}</div>
+            <div className={styles.subjects}>{subj}</div>
           ))}
 
-          <div className={`dropdown-subjects ${open ? `active` : `inactive`} `}>
-            <ul className="dropdownItem">
+          <div
+            className={
+              (styles.dropdownSubjects, open ? styles.active : styles.inactive)
+            }
+          >
+            <ul className={styles.dropdownItem}>
               {subjectList.map((subList) => (
-                <div className="subItem">{subList}</div>
+                <div className={styles.subItem}>{subList}</div>
               ))}
             </ul>
           </div>
         </div>
-        <div className="flexBox">
+        <div className={styles.flexBox}>
           {signIn.map((sign) => (
-            <div className="signing">{sign}</div>
+            <div className={styles.signing}>{sign}</div>
           ))}
         </div>
       </div>

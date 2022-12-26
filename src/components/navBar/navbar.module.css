@@ -14,7 +14,7 @@
   height: 100%;
 }
 
-.subject-container {
+.subjectContainer {
   position: relative;
   height: 100%;
   width: 20%;
@@ -23,7 +23,7 @@
   align-items: center;
 }
 
-.logo-Name {
+.logoName {
   display: inline-block;
   font-family: Arial;
   font-size: 25px;
@@ -97,7 +97,7 @@
   cursor: pointer;
 }
 
-.dropdown-subjects {
+.dropdownSubjects {
   position: absolute;
   left: 0px;
   top: 100%;
@@ -113,13 +113,13 @@
   padding-left: 5px;
 }
 
-.dropdown-subjects.active {
+.active {
   opacity: 1;
   visibility: visible;
   transition-duration: 0.5s;
 }
 
-.dropdown-subjects.inactive {
+.inactive {
   opacity: 0;
   visibility: hidden;
   transition-duration: 0.5s;
