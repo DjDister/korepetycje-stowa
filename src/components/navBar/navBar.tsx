@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import styles from "./navbar.module.css";
 const Name = ["Kornik"];
 const navElem = ["Our Teachers", "Our offer", "About us"];
 const sub = ["Subjects"];
@@ -16,9 +16,9 @@ function NavBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mainNav">
-      <div className="insideMain">
-        <div className="flexBox">
+    <div className={styles.mainNav}>
+      <div className={styles.insideMain}>
+        <div className={styles.flexBox}>
           {Name.map((name) => (
             <div className="logo-Name">{name}</div>
           ))}
