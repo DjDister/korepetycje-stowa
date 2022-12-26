@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { firebaseApp } from "./firebaseConfig";
+import "./loginPage.css";
 
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { logIn } from "./redux/loginSlice";
@@ -33,39 +34,39 @@ export default function LoginPage() {
       });
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "40%",
-          height: "40%",
-        }}
-      >
-        <div>is loggedIn {loginStatus.isLoggedIn ? "True" : "False"}</div>
-        <div>{formData.error}</div>
-        <input
-          onChange={(e) => setFormData({ ...formData, login: e.target.value })}
-          placeholder="Username/Email"
-        ></input>
-        <input
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
-          placeholder="Password"
-          type={"password"}
-        ></input>
-        <div onClick={login}>LOGIN</div>
+    <div className="wholePage">
+      <div className="leftSide">
+        <div className="zaloguj">Zaloguj sie</div>
+        <div className="twoInputs">
+          <div className="partPassword">
+            <input
+              className="password"
+              onChange={(e) =>
+                setFormData({ ...formData, login: e.target.value })
+              }
+              placeholder="Username/Email"
+            ></input>
+          </div>
+
+          <div className="partPassword">
+            <input
+              className="password"
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="password"
+              type={"password"}
+            ></input>
+          </div>
+
+          <div className="logButton" onClick={login}>
+            Zaloguj sie
+          </div>
+        </div>
+      </div>
+
+      <div className="rightSide">
+        <img src={require("./Panda.png")} />
       </div>
     </div>
   );
