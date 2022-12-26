@@ -52,18 +52,19 @@ function NavBar() {
           {sub.map((subj) => (
             <div className={styles.subjects}>{subj}</div>
           ))}
-
-          <div
-            className={
-              (styles.dropdownSubjects, open ? styles.active : styles.inactive)
-            }
-          >
-            <ul className={styles.dropdownItem}>
-              {subjectList.map((subList) => (
-                <div className={styles.subItem}>{subList}</div>
-              ))}
-            </ul>
-          </div>
+          {open ? (
+            <div
+              className={`${styles.dropdownSubjects} 
+                ${open ? styles.active : styles.inactive})
+              `}
+            >
+              <ul className={styles.dropdownItem}>
+                {subjectList.map((subList) => (
+                  <div className={styles.subItem}>{subList}</div>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
         <div className={styles.flexBox}>
           {signIn.map((sign) => (
