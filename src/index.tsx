@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -14,8 +15,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage/>
-  }
+    element: <LoginPage />,
+  },
+  { path: "register", element: <RegisterPage /> },
 ]);
 
 const root = ReactDOM.createRoot(
