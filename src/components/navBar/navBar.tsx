@@ -30,7 +30,7 @@ function NavBar() {
             <div
               key={index}
               className={`${styles.navBlocks} ${
-                status === index ? styles.underlinded : null
+                status === index ? styles.underlined : null
               }`}
               onMouseEnter={() => setStatus(index)}
               onMouseLeave={() => setStatus(undefined)}
