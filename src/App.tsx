@@ -14,7 +14,12 @@ function App() {
       {loginStatus.isLoggedIn ? "true" : "false"}
       <Link to="login">LogIn</Link>
       <Link to="register">SignIn</Link>
-      <div onClick={() => dispatch(logOut())}>LogOut</div>
+      {loginStatus.isLoggedIn ? (
+        <>
+          <div onClick={() => dispatch(logOut())}>LogOut</div>
+          <Link to="room">Rooms</Link>
+        </>
+      ) : null}
     </div>
   );
 }
