@@ -33,10 +33,15 @@ export default function LoginPage() {
         setFormData({ ...formData, error: errorMessage });
       });
   };
+
+  const [registerMode, setRegisterMode] = useState(false);
+
   return (
     <div className="wholePage">
       <div className="leftSide">
-        <div className="zaloguj">Zaloguj sie</div>
+        <div className="zaloguj">
+          {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
+        </div>
         <div className="twoInputs">
           <div className="partPassword">
             <input
@@ -58,9 +63,26 @@ export default function LoginPage() {
               type={"password"}
             ></input>
           </div>
-
+          {registerMode ? (
+            <div className="partPassword">
+              <input
+                className="password"
+                placeholder="Repeat password"
+                type={"password"}
+              ></input>
+            </div>
+          ) : null}
           <div className="logButton" onClick={login}>
-            Zaloguj sie
+            {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
+            {!registerMode ? (
+              <div className="tooLate" onClick={() => setRegisterMode(true)}>
+                Nie masz konta? <div className="kolor">Zarejestruj się</div>
+              </div>
+            ) : (
+              <div className="tooLate" onClick={() => setRegisterMode(false)}>
+                Masz już konto? <div className="kolor">Zaloguj się</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

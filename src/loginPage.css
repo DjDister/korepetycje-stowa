@@ -1,7 +1,6 @@
 .wholePage {
   width: 100%;
   height: 100vh;
-  background-color: pink;
   display: flex;
 }
 
@@ -28,10 +27,12 @@
 
 .twoInputs {
   position: absolute;
-  top: 35%;
+  top: 30%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  gap: 20px;
+  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
   font-family: Arial;
   font-size: 30px;
@@ -40,7 +41,6 @@
 }
 
 .partPassword {
-  position: relative;
   width: 100%;
   height: 70%;
 }
@@ -67,6 +67,44 @@
   border-radius: 20px;
   border-color: grey;
   background-color: chartreuse;
+  position: relative;
+}
+
+.secondPas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+.register {
+  width: 100%;
+  height: 40%;
+  font-family: arial;
+  font-size: 20px;
+  align-items: center;
+  padding-left: 5px;
+  border-style: solid;
+  border-radius: 20px;
+  border-color: grey;
+  display: flex;
+}
+
+.tooLate {
+  position: absolute;
+  top: 100%;
+  left: 0%;
+  margin-top: 15px;
+  font-size: 21px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.kolor {
+  color: blue;
+  display: inline-block;
 }
 
 .rightSide {
