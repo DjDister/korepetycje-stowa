@@ -13,7 +13,6 @@ function App() {
       <NavBar />
       {loginStatus.isLoggedIn ? "true" : "false"}
       <Link to="login">LogIn</Link>
-      <Link to="register">SignIn</Link>
       <div onClick={() => dispatch(logOut())}>LogOut</div>
     </div>
   );
