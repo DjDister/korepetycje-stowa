@@ -66,8 +66,9 @@
   border-style: solid;
   border-radius: 20px;
   border-color: grey;
-  background-color: chartreuse;
+  background-color: #7fff00;
   position: relative;
+  cursor: pointer;
 }
 
 .secondPas {

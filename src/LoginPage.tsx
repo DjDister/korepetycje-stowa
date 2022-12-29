@@ -5,6 +5,7 @@ import "./loginPage.css";
 
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { logIn } from "./redux/loginSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ export default function LoginPage() {
   const loginStatus = useAppSelector((state) => state.loginStatus);
   console.log(loginStatus);
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const login = () => {
     console.log(`login`);
     signInWithEmailAndPassword(auth, formData.login, formData.password)
@@ -27,6 +28,7 @@ export default function LoginPage() {
         console.log(user);
         dispatch(logIn(user)); //some issue with type of user  - redux non serializable value error
         // ...
+        navigate("/");
       })
       .catch((error) => {
         const errorMessage = error.message;
