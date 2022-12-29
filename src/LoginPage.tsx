@@ -99,8 +99,14 @@ export default function LoginPage() {
               ></input>
             </div>
           ) : null}
-          <div className="logButton" onClick={registerMode ? register : login}>
-            {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
+
+          <div className="logButtonContainer">
+            <div
+              className="logButton"
+              onClick={registerMode ? register : login}
+            >
+              {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
+            </div>
             {!registerMode ? (
               <div className="tooLate" onClick={() => setRegisterMode(true)}>
                 Nie masz konta? <div className="kolor">Zarejestruj się</div>
