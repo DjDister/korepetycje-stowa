@@ -72,61 +72,28 @@ export default function LoginPage() {
   return (
     <div className="wholePage">
       <div className="leftSide">
-        <div className="zaloguj">
-          {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
-        </div>
-        <div className="twoInputs">
-          <div className="partPassword">
-            {errorPrint ? <div>{errorPrint.message}</div> : null}
-            <input
-              className="password"
-              onChange={(e) =>
-                setFormData({ ...formData, login: e.target.value })
-              }
-              placeholder="Username/Email"
-            ></input>
+        <div className="insideLeft">
+          <div className="register">
+            {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
           </div>
-
-          <div className="partPassword">
-            <input
-              className="password"
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              placeholder="password"
-              type={"password"}
-            ></input>
-          </div>
-          {registerMode ? (
-            <div className="partPassword">
-              <input
-                onChange={(e) =>
-                  setFormData({ ...formData, passwordRepeated: e.target.value })
-                }
-                className="password"
-                placeholder="Repeat password"
-                type={"password"}
-              ></input>
+          <div className="emailAndPassword">
+            <div className="titleAndInputContainer">
+              <div className="emailFont">E-mail</div>
+              <input className="input" type={"email"}></input>
             </div>
-          ) : null}
-
-          <div className="logButtonContainer">
-            <div
-              className="logButton"
-              onClick={registerMode ? register : login}
-            >
-              {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
+            <div className="titleAndInputContainer">
+              <div className="emailFont">Password</div>
+              <input className="input" type={"password"}></input>
             </div>
-            {!registerMode ? (
-              <div className="tooLate" onClick={() => setRegisterMode(true)}>
-                Nie masz konta? <div className="kolor">Zarejestruj się</div>
-              </div>
-            ) : (
-              <div className="tooLate" onClick={() => setRegisterMode(false)}>
-                Masz już konto? <div className="kolor">Zaloguj się</div>
-              </div>
-            )}
           </div>
+          <div className="logInAndForgotPassword">
+            <div className="logIn">Log in</div>
+            <div className="forgotPassword">Zapomniałeś Hasła?</div>
+          </div>
+          <div className="kreska">
+            <div className="lub">lub</div>
+          </div>
+          <div className="companyLogin">Zaloguj się z Google</div>
         </div>
       </div>
 
