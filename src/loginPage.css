@@ -6,13 +6,24 @@
 
 .leftSide {
   position: absolute;
-  left: 0%;
-  width: 50%;
-  height: 100vh;
+  left: 1%;
+  top: 2%;
+  width: 48%;
+  height: 96vh;
   background-color: white;
   align-items: center;
   justify-content: center;
   display: flex;
+  border-radius: 30% 90% 50% 30% / 30% 50% 50% 70%;
+  transition: border-radius 1000ms ease-in-out;
+  border-style: dashed;
+  border-color: black;
+}
+
+.leftSide:hover {
+  border-radius: 10%;
+  border-style: dashed;
+  border-color: black;
 }
 
 .zaloguj {
@@ -49,16 +60,26 @@
   display: flex;
   width: 100%;
   height: 60%;
-  border-radius: 20px;
+  /* border-radius: 20px;
   border-style: solid;
   border-color: grey;
-  align-items: center;
+  align-items: center;*/
   font-size: 20px;
   padding-left: 5px;
+  background-color: white;
+  background: transparent;
+  outline: none;
+  border-style: hidden;
+  border-bottom: 3px solid grey;
 }
 
-.logButtonContainer{
-
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+.logButtonContainer {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,9 +91,6 @@
   background-color: #7fff00;
   position: relative;
   cursor: pointer;
-}
-
-.logButton {
 }
 
 .secondPas {
@@ -114,13 +132,23 @@
 
 .rightSide {
   position: absolute;
-  right: 0%;
-  width: 50%;
-  height: 100vh;
+  right: 1%;
+  width: 49%;
+  top: 2%;
+  height: 96vh;
   display: flex;
   justify-content: center;
   align-items: center;
   object-position: center 100%;
   object-fit: contain;
   overflow: hidden;
+  /* border-radius: 28% 0% 0% 19% / 30% 0% 0% 30%;
+  /* border-radius: 90% 30% 50% 50% /50% 30% 70% 50%;
+  border-radius: 30% 90% 50% 30% / 30% 50% 50% 70%;*/
+  border-radius: 90% 30% 50% 50% /50% 30% 70% 50%;
+  transition: border-radius 1000ms ease-in-out;
+}
+
+.rightSide:hover {
+  border-radius: 10%;
 }

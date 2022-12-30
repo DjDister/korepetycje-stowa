@@ -10,6 +10,7 @@ import "./loginPage.css";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { logIn } from "./redux/loginSlice";
 import { useNavigate } from "react-router-dom";
+import errorFeedback from "./utils/errorMessages";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -38,7 +39,8 @@ export default function LoginPage() {
           dispatch(logIn(user));
         })
         .catch((error) => {
-          setFormData({ ...formData, error: error.message });
+          setFormData({ ...formData, error: error.code });
+          console.log(error);
         });
     } else {
       setFormData({ ...formData, error: "Passwords are different" });
@@ -54,9 +56,16 @@ export default function LoginPage() {
         navigate("/");
       })
       .catch((error) => {
-        setFormData({ ...formData, error: error.message });
+        setFormData({ ...formData, error: error.code });
       });
   };
+
+  //const found = array1.find(element => element > 10);
+  const errorPrint = errorFeedback.find(
+    (errorElem) => errorElem.code === formData.error
+  );
+  console.log(errorPrint);
+  console.log(formData.error);
 
   const [registerMode, setRegisterMode] = useState(false);
 
@@ -68,6 +77,7 @@ export default function LoginPage() {
         </div>
         <div className="twoInputs">
           <div className="partPassword">
+            {errorPrint ? <div>{errorPrint.message}</div> : null}
             <input
               className="password"
               onChange={(e) =>
