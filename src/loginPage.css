@@ -16,14 +16,14 @@
   width: 50%;
   height: 100%;
   background-color: yellow;
-  display: block;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
 .register {
   width: 100%;
-  height: 20%;
+  height: 25%;
   font-size: 30px;
   display: flex;
   justify-content: center;
@@ -100,7 +100,7 @@ input {
   width: 100%;
   height: 0.25%;
   background-color: #d3d3d3;
-  margin-top: 4%;
+  margin-top: 20px;
   position: relative;
 }
 .lub {
@@ -113,9 +113,10 @@ input {
   bottom: 50%;
   left: 50%;
   color: grey;
-  width: 200px;
-  transform: translateX(-50%);
-  transform: translateY(50%);
+  transform: translateX(-50%) translateY(50%);
+  padding: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .companyLogin {
