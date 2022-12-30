@@ -7,7 +7,9 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
+import RoomsPage from "./RoomsPage";
 import RoomPage from "./RoomPage";
+import CheckInRoom from "./CheckInRoom";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +21,9 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   { path: "register", element: <RegisterPage /> },
-  { path: "/room", element: <RoomPage /> },
+  { path: "/rooms", element: <RoomsPage /> },
+  { path: "room/:userId/:roomId/checkin", element: <CheckInRoom /> },
+  { path: "/room/:userId/:roomId", element: <RoomPage /> },
 ]);
 
 const root = ReactDOM.createRoot(

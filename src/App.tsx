@@ -17,7 +17,7 @@ function App() {
       {loginStatus.isLoggedIn ? (
         <>
           <div onClick={() => dispatch(logOut())}>LogOut</div>
-          <Link to="room">Rooms</Link>
+          <Link to="rooms">Rooms</Link>
         </>
       ) : null}
     </div>
