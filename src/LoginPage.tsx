@@ -11,6 +11,8 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { logIn } from "./redux/loginSlice";
 import { useNavigate } from "react-router-dom";
 import errorFeedback from "./utils/errorMessages";
+import GoogleIcon from "./components/navBar/icons/GoogleIcon";
+import MailIcon from "./components/navBar/icons/MailIcon";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -71,6 +73,7 @@ export default function LoginPage() {
 
   return (
     <div className="wholePage">
+      <div className="card"></div>
       <div className="leftSide">
         <div className="insideLeft">
           <div className="register">
@@ -93,12 +96,22 @@ export default function LoginPage() {
           <div className="kreska">
             <div className="lub">lub</div>
           </div>
-          <div className="companyLogin">Zaloguj się z Google</div>
+          <div className="companyLogin">
+            <div className="icon">
+              <GoogleIcon />
+            </div>
+            <div className="nextToIcon">Zaloguj się z Google</div>
+          </div>
+          <div className="noAccount">
+            Nie masz jeszcze konta?<div className="join">Dołącz teraz!</div>
+          </div>
         </div>
       </div>
 
       <div className="rightSide">
-        <img src={require("./Panda.png")} />
+        <div className="insideRight">
+          <img src={require("./Panda.png")} />
+        </div>
       </div>
     </div>
   );

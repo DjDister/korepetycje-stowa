@@ -146,7 +146,7 @@ function NavBar() {
               className={styles.signButton}
               to="login"
             >
-              sign in
+              <div className={styles.signIn}>sign in</div>
             </Link>
           </div>
         )}

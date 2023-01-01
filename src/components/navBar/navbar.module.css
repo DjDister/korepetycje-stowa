@@ -145,8 +145,6 @@
   font-weight: bold;
   background-color: white;
   border-radius: 30% 90% 50% 30% / 30% 50% 50% 70%;
-  border-color: black;
-  border-style: dashed;
   transition: border-radius 500ms ease-in-out;
 }
 
@@ -179,6 +177,9 @@
   padding: 30px;
   cursor: pointer;
   font-weight: bolder;
+  color: white;
+}
+.signIn {
   color: white;
 }
 

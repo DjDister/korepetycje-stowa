@@ -3,10 +3,19 @@
   height: 100vh;
   display: flex;
 }
-
+.card {
+  width: 40%;
+  height: 88%;
+  position: absolute;
+  top: 6%;
+  left: 5%;
+  border: 3px solid #d3d3d3;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
+}
 .leftSide {
   width: 50%;
-  background-color: red;
+  /*background-color: red;*/
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +24,7 @@
 .insideLeft {
   width: 50%;
   height: 100%;
-  background-color: yellow;
+  /* background-color: yellow; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,7 +37,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: chocolate;
+  /*background-color: chocolate;*/
   font-weight: bold;
   font-family: arial;
 }
@@ -48,12 +57,13 @@
 
 .input {
   width: 100%;
-  height: 50%;
+  height: 70%;
   font-size: 20px;
   outline: none;
   border: 2px solid #d3d3d3;
   border-radius: 6px;
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
+  /* background-color: fuchsia; */
 }
 
 input {
@@ -61,7 +71,7 @@ input {
 }
 
 .titleAndInputContainer {
-  width: 90%;
+  width: 100%;
   height: 100%;
   display: block;
 }
@@ -72,22 +82,27 @@ input {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 12%;
-  background-color: chartreuse;
+  height: 16%;
+  margin-top: 20px;
+  /* background-color: chartreuse; */
 }
 .logIn {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 90%;
+  width: 100%;
   height: 50%;
   background-color: #5465ff;
   color: white;
   border-radius: 6px;
   font-weight: bolder;
 }
+
+.logIn:hover {
+  opacity: 0.75;
+}
 .forgotPassword {
-  background-color: purple;
+  /* background-color: purple; */
   height: 50%;
   display: flex;
   align-items: center;
@@ -124,21 +139,86 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: indigo;
+  /* background-color: indigo; */
   margin-top: 7%;
-  height: 10%;
+  height: 8%;
   border: 2px solid #d3d3d3;
   border-radius: 6px;
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.1);
 }
 
+.companyLogin:hover {
+  opacity: 0.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nextToIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.iconAndLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.join {
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #5465ff;
+}
+
+.join:hover {
+  text-decoration: underline;
+}
+
+.noAccount {
+  padding-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #d3d3d3;
+  font-family: arial;
+}
+
 .rightSide {
   width: 50%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   object-fit: contain;
   overflow: hidden;
+  border-radius: 10%;
+}
+.insideRight {
+  overflow: hidden;
+  /* border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; */
+  border-radius: 70% 30% 50% 50% / 50% 30% 70% 50%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: aqua;
+  transition: border-radius 500ms ease-in-out;
+}
+
+.insideRight:hover {
   border-radius: 10%;
 }
 
