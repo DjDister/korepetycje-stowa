@@ -52,18 +52,20 @@ export function CheckInRoom() {
       "attendees"
     );
 
-    await addDoc(roomsRef, {
+    const atendeeId = await addDoc(roomsRef, {
       checkInName: checkInName,
       userId: loginStatus.user?.uid,
       rank: hostId === loginStatus.user?.uid ? "admin" : "user",
       accepted: hostId === loginStatus.user?.uid ? "true" : "false",
     });
+
     navigate(`/room/${hostId}/${roomId}`, {
       state: {
         checkInName: checkInName,
         userId: loginStatus.user?.uid,
         rank: hostId === loginStatus.user?.uid ? "admin" : "user",
         accepted: hostId === loginStatus.user?.uid ? "true" : "false",
+        yourAttendeeId: atendeeId.id,
       },
     });
   };

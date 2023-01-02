@@ -2,16 +2,27 @@ import {
   collection,
   deleteDoc,
   doc,
+  DocumentData,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
+  QueryDocumentSnapshot,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { db } from "./firebaseConfig";
 import { useAppSelector } from "./redux/hooks";
+import {
+  createOfer,
+  doOffer,
+  initConnection,
+  initLocalStream,
+  listenToConnection,
+} from "./utils/RTCModule";
 
 type Atendee = {
   checkInName: string;
@@ -20,6 +31,17 @@ type Atendee = {
   accepted: string;
 };
 
+const servers = {
+  iceServers: [
+    {
+      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+    },
+  ],
+  iceCandidatePoolSize: 10,
+};
+
+const pc = new RTCPeerConnection(servers);
+
 export default function RoomPage() {
   const [areYouAdmin, setAreYouAdmin] = useState(false);
   const [attendees, setAttendees] = useState<Atendee[]>([]);
@@ -27,38 +49,159 @@ export default function RoomPage() {
   const navigate = useNavigate();
   const loginStatus = useAppSelector((state) => state.loginStatus);
   const hostId = state.pathname.substring(6, 34);
+
   const roomId = state.pathname.substring(35, 55);
+  const yourProfile = attendees.find(
+    (attendee) => attendee.userId === loginStatus.user?.uid
+  );
 
-  console.log(attendees);
-
-  // const unsub = onSnapshot(doc(db, "users", hostId, "rooms", roomId), (doc) => {
-  //   console.log("Current data: ", doc.data());
-  // }); // Listen for document metadata changes
   useEffect(() => {
-    if (!loginStatus.isLoggedIn) {
-      navigate("/login");
-    } else {
-      setAreYouAdmin(hostId === loginStatus.user?.uid);
-      const fetchAtendees = async () => {
-        const q = query(
-          collection(db, "users", hostId, "rooms", roomId, "attendees")
-        );
+    const q = query(
+      collection(db, "users", hostId, "rooms", roomId, "attendees")
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const fetchAtendees: Atendee[] = [];
+      querySnapshot.forEach((doc) => {
+        const atendee = doc.data() as Atendee;
 
-        const querySnapshot = await getDocs(q);
-        const fetchAtendees: Atendee[] = [];
-        querySnapshot.forEach((doc) => {
-          const atendee = doc.data() as Atendee;
-          fetchAtendees.push(atendee);
-        }, []);
-        setAttendees(fetchAtendees);
-      };
-      fetchAtendees();
-    }
+        fetchAtendees.push(atendee);
+      }, []);
+      setAttendees(fetchAtendees);
+    });
   }, []);
 
+  const [webcamActive, setWebcamActive] = useState(false);
+
+  const localRef = useRef<HTMLVideoElement>(null);
+  const remoteRef = useRef<HTMLVideoElement>(null);
+  const setupSources = async () => {
+    const localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    const remoteStream = new MediaStream();
+    localStream.getTracks().forEach((track) => {
+      pc.addTrack(track, localStream);
+    });
+
+    pc.ontrack = (event) => {
+      event.streams[0].getTracks().forEach((track) => {
+        remoteStream.addTrack(track);
+      });
+    };
+    if (localRef.current && remoteRef.current) {
+      localRef.current.srcObject = localStream;
+      remoteRef.current.srcObject = remoteStream;
+      setWebcamActive(true);
+    }
+    const isAdmin = hostId === loginStatus.user?.uid;
+    console.log(isAdmin);
+    if (isAdmin) {
+      const callDoc = doc(
+        db,
+        "users",
+        hostId,
+        "rooms",
+        roomId,
+        "calls",
+        roomId
+      );
+      const offerCandidates = collection(callDoc, "offerCandidates");
+      const answerCandidates = collection(callDoc, "answerCandidates");
+
+      pc.onicecandidate = (event) => {
+        event.candidate &&
+          setDoc(doc(offerCandidates), event.candidate.toJSON());
+      };
+
+      const offerDescription = await pc.createOffer();
+      await pc.setLocalDescription(offerDescription);
+
+      const offer = {
+        sdp: offerDescription.sdp,
+        type: offerDescription.type,
+      };
+
+      await setDoc(callDoc, offer);
+
+      onSnapshot(callDoc, (snapshot) => {
+        const data = snapshot.data();
+        if (!pc.currentRemoteDescription && data?.answer) {
+          const answerDescription = new RTCSessionDescription(data.answer);
+          pc.setRemoteDescription(answerDescription);
+        }
+      });
+
+      onSnapshot(answerCandidates, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            let data = change.doc.data();
+            pc.addIceCandidate(new RTCIceCandidate(data));
+          }
+        });
+      });
+    } else {
+      const callDoc = doc(
+        db,
+        "users",
+        hostId,
+        "rooms",
+        roomId,
+        "calls",
+        roomId
+      );
+      const answerCandidates = collection(callDoc, "answerCandidates");
+      const offerCandidates = collection(callDoc, "offerCandidates");
+      pc.onicecandidate = (event) => {
+        event.candidate &&
+          setDoc(doc(answerCandidates), event.candidate.toJSON());
+      };
+
+      const callData = (await getDoc(callDoc)).data();
+      const offerDescription = callData as RTCSessionDescription;
+
+      await pc.setRemoteDescription(
+        new RTCSessionDescription(offerDescription)
+      );
+
+      const answerDescription = await pc.createAnswer();
+      await pc.setLocalDescription(answerDescription);
+
+      const answer = {
+        type: answerDescription.type,
+        sdp: answerDescription.sdp,
+      };
+
+      await updateDoc(callDoc, { answer });
+
+      onSnapshot(offerCandidates, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            let data = change.doc.data();
+            pc.addIceCandidate(new RTCIceCandidate(data));
+          }
+        });
+      });
+    }
+  };
+
+  const hangUp = async () => {
+    pc.close();
+
+    const callDoc = doc(db, "users", hostId, "rooms", roomId, "calls", roomId);
+    const answerCandidates = collection(callDoc, "answerCandidates");
+    const offerCandidates = collection(callDoc, "offerCandidates");
+    //delee all the candidates offer and answer from the database
+    await deleteDoc(callDoc);
+  };
+
+  pc.onconnectionstatechange = (event) => {
+    if (pc.connectionState === "disconnected") {
+      hangUp();
+    }
+  };
+
   const acceptUser = async (atendee: Atendee) => {
-    console.log(`tt`);
-    console.log(atendee.userId);
     const q = query(
       collection(db, "users", hostId, "rooms", roomId, "attendees"),
       where("userId", "==", atendee.userId)
@@ -116,15 +259,87 @@ export default function RoomPage() {
               backgroundColor: "greenyellow",
             }}
           >
-            Cam1
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "relative",
+              }}
+            >
+              <video
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                ref={localRef}
+                autoPlay
+                playsInline
+              ></video>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "5px",
+                  right: "5px",
+                  zIndex: 10,
+                  paddingTop: "2px",
+                  paddingBottom: "2px",
+                  paddingLeft: "8px",
+                  paddingRight: "8px",
+                  borderRadius: "10px",
+                  backgroundColor: "white",
+                }}
+              >
+                {yourProfile?.checkInName}
+              </div>
+            </div>
           </div>
           <div
-            style={{ width: "100%", height: "20vh", backgroundColor: "yellow" }}
+            style={{
+              width: "100%",
+              height: "20vh",
+              backgroundColor: "greenyellow",
+            }}
           >
-            Cam2
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "relative",
+              }}
+            >
+              <video
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                ref={remoteRef}
+                autoPlay
+                playsInline
+              ></video>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "5px",
+                  right: "5px",
+                  zIndex: 10,
+                  paddingTop: "2px",
+                  paddingBottom: "2px",
+                  paddingLeft: "8px",
+                  paddingRight: "8px",
+                  borderRadius: "10px",
+                  backgroundColor: "white",
+                }}
+              >
+                other
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <div onClick={setupSources}> setup</div>
+      <div onClick={hangUp}>hangup</div>
       <div>
         {attendees
           .filter((atendee) => atendee.accepted === "true")
