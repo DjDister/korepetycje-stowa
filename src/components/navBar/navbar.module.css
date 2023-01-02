@@ -149,7 +149,7 @@
 }
 
 .dropdownSubjects:hover {
-  border-radius: 10%;
+  border-radius: 5%;
 }
 
 .dropdownItem {
@@ -239,7 +239,7 @@
 }
 
 .dropdownMenuPage:hover {
-  border-radius: 10%;
+  border-radius: 5%;
 }
 
 /*::-webkit-scrollbar {

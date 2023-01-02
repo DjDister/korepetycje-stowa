@@ -59,6 +59,7 @@ export default function LoginPage() {
       })
       .catch((error) => {
         setFormData({ ...formData, error: error.code });
+        console.log(error);
       });
   };
 
@@ -79,19 +80,78 @@ export default function LoginPage() {
           <div className="register">
             {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
           </div>
-          <div className="emailAndPassword">
-            <div className="titleAndInputContainer">
-              <div className="emailFont">E-mail</div>
-              <input className="input" type={"email"}></input>
+          {registerMode ? (
+            <div className="emailAndDoublePassword">
+              <div className="titleAndInputContainer">
+                <div className="emailFont">E-mail</div>
+                <input
+                  className="input"
+                  type={"email"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, login: e.target.value })
+                  }
+                  placeholder="Username/Email"
+                ></input>
+              </div>
+              <div className="titleAndInputContainer">
+                <div className="emailFont">Password</div>
+                <input
+                  className="input"
+                  type={"password"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                ></input>
+              </div>
+              <div className="titleAndInputContainer">
+                <div className="emailFont">Repeat Password</div>
+                <input
+                  className="input"
+                  type={"password"}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      passwordRepeated: e.target.value,
+                    })
+                  }
+                ></input>
+              </div>
             </div>
-            <div className="titleAndInputContainer">
-              <div className="emailFont">Password</div>
-              <input className="input" type={"password"}></input>
+          ) : (
+            <div className="emailAndPassword">
+              <div className="titleAndInputContainer">
+                <div className="emailFont">E-mail</div>
+                <input
+                  className="input"
+                  type={"email"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, login: e.target.value })
+                  }
+                  placeholder="Username/Email"
+                ></input>
+              </div>
+              <div className="titleAndInputContainer">
+                <div className="emailFont">Password</div>
+                <input
+                  className="input"
+                  type={"password"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                ></input>
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="logInAndForgotPassword">
-            <div className="logIn">Log in</div>
-            <div className="forgotPassword">Zapomniałeś Hasła?</div>
+            <div className="logIn" onClick={registerMode ? register : login}>
+              {registerMode ? "Register" : "Login"}
+            </div>
+            <div className="forgotPassword">
+              {registerMode
+                ? "Czy wiedziałeś że panda ma 6 palców w każdej z łap ?"
+                : "Zapomniałeś hasła ?"}
+            </div>
           </div>
           <div className="kreska">
             <div className="lub">lub</div>
@@ -100,14 +160,23 @@ export default function LoginPage() {
             <div className="icon">
               <GoogleIcon />
             </div>
-            <div className="nextToIcon">Zaloguj się z Google</div>
+            <div className="nextToIcon">
+              {registerMode
+                ? "Zarejestruj się z Google"
+                : "Zaloguj się z Google"}
+            </div>
           </div>
           <div className="noAccount">
-            Nie masz jeszcze konta?<div className="join">Dołącz teraz!</div>
+            {registerMode ? "Masz już konto ?" : "Nie masz jeszcze konta ?"}
+            <div
+              className="join"
+              onClick={() => setRegisterMode(!registerMode)}
+            >
+              {registerMode ? "Zaloguj się !" : "Dołącz teraz !"}
+            </div>
           </div>
         </div>
       </div>
-
       <div className="rightSide">
         <div className="insideRight">
           <img src={require("./Panda.png")} />
