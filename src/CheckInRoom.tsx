@@ -17,7 +17,7 @@ type RoomData = {
 };
 export function CheckInRoom() {
   const [checkInName, setCheckInName] = useState("");
-  const [roomData, setRoomData] = useState<RoomData>();
+  const [roomName, setRoomName] = useState("");
 
   const state = useLocation();
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export function CheckInRoom() {
         const docRef = doc(db, "users", hostId, "rooms", roomId);
         const docSnap = (await (await getDoc(docRef)).data()) as RoomData;
 
-        setRoomData(docSnap);
+        setRoomName(docSnap.roomName);
       };
       fetchRoom();
     }
@@ -66,6 +66,7 @@ export function CheckInRoom() {
         rank: hostId === loginStatus.user?.uid ? "admin" : "user",
         accepted: hostId === loginStatus.user?.uid ? "true" : "false",
         yourAttendeeId: atendeeId.id,
+        roomName: roomName,
       },
     });
   };
@@ -74,7 +75,7 @@ export function CheckInRoom() {
     <div>
       <NavBar />
       <div>CheckInRoom</div>
-      <div>Connecting to {roomData?.roomName}</div>
+      <div>Connecting to {roomName}</div>
       <div>Set your display name: </div>
       <input
         placeholder={checkInName}

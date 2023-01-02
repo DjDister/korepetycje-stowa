@@ -2,27 +2,19 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentData,
   getDoc,
   getDocs,
   onSnapshot,
   query,
-  QueryDocumentSnapshot,
   setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { db } from "./firebaseConfig";
 import { useAppSelector } from "./redux/hooks";
-import {
-  createOfer,
-  doOffer,
-  initConnection,
-  initLocalStream,
-  listenToConnection,
-} from "./utils/RTCModule";
+import servers from "./webRTCConfig";
 
 type Atendee = {
   checkInName: string;
@@ -31,35 +23,29 @@ type Atendee = {
   accepted: string;
 };
 
-const servers = {
-  iceServers: [
-    {
-      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
-    },
-  ],
-  iceCandidatePoolSize: 10,
-};
-
 const pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
-  const [areYouAdmin, setAreYouAdmin] = useState(false);
   const [attendees, setAttendees] = useState<Atendee[]>([]);
   const state = useLocation();
-  const navigate = useNavigate();
   const loginStatus = useAppSelector((state) => state.loginStatus);
   const hostId = state.pathname.substring(6, 34);
-
   const roomId = state.pathname.substring(35, 55);
-  const yourProfile = attendees.find(
-    (attendee) => attendee.userId === loginStatus.user?.uid
+  const isAdmin = hostId === loginStatus.user?.uid;
+  const callDoc = doc(db, "users", hostId, "rooms", roomId, "calls", roomId);
+  const answerCandidates = collection(callDoc, "answerCandidates");
+  const offerCandidates = collection(callDoc, "offerCandidates");
+  const attendeesDbRef = collection(
+    db,
+    "users",
+    hostId,
+    "rooms",
+    roomId,
+    "attendees"
   );
-
   useEffect(() => {
-    const q = query(
-      collection(db, "users", hostId, "rooms", roomId, "attendees")
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const q = query(attendeesDbRef);
+    onSnapshot(q, (querySnapshot) => {
       const fetchAtendees: Atendee[] = [];
       querySnapshot.forEach((doc) => {
         const atendee = doc.data() as Atendee;
@@ -94,21 +80,8 @@ export default function RoomPage() {
       remoteRef.current.srcObject = remoteStream;
       setWebcamActive(true);
     }
-    const isAdmin = hostId === loginStatus.user?.uid;
-    console.log(isAdmin);
-    if (isAdmin) {
-      const callDoc = doc(
-        db,
-        "users",
-        hostId,
-        "rooms",
-        roomId,
-        "calls",
-        roomId
-      );
-      const offerCandidates = collection(callDoc, "offerCandidates");
-      const answerCandidates = collection(callDoc, "answerCandidates");
 
+    if (isAdmin) {
       pc.onicecandidate = (event) => {
         event.candidate &&
           setDoc(doc(offerCandidates), event.candidate.toJSON());
@@ -141,17 +114,6 @@ export default function RoomPage() {
         });
       });
     } else {
-      const callDoc = doc(
-        db,
-        "users",
-        hostId,
-        "rooms",
-        roomId,
-        "calls",
-        roomId
-      );
-      const answerCandidates = collection(callDoc, "answerCandidates");
-      const offerCandidates = collection(callDoc, "offerCandidates");
       pc.onicecandidate = (event) => {
         event.candidate &&
           setDoc(doc(answerCandidates), event.candidate.toJSON());
@@ -188,10 +150,6 @@ export default function RoomPage() {
   const hangUp = async () => {
     pc.close();
 
-    const callDoc = doc(db, "users", hostId, "rooms", roomId, "calls", roomId);
-    const answerCandidates = collection(callDoc, "answerCandidates");
-    const offerCandidates = collection(callDoc, "offerCandidates");
-    //delee all the candidates offer and answer from the database
     await deleteDoc(callDoc);
   };
 
@@ -202,15 +160,11 @@ export default function RoomPage() {
   };
 
   const acceptUser = async (atendee: Atendee) => {
-    const q = query(
-      collection(db, "users", hostId, "rooms", roomId, "attendees"),
-      where("userId", "==", atendee.userId)
-    );
+    const q = query(attendeesDbRef, where("userId", "==", atendee.userId));
     const querySnapshot = await getDocs(q);
 
     const fetchAtendees: Atendee[] = [];
     querySnapshot.forEach(async (doc) => {
-      console.log(doc.data());
       const atendee = doc.data() as Atendee;
       fetchAtendees.push(atendee);
       await setDoc(doc.ref, { ...atendee, accepted: "true" });
@@ -222,11 +176,8 @@ export default function RoomPage() {
   };
 
   const removeUser = async (atendee: Atendee) => {
-    if (areYouAdmin) {
-      const q = query(
-        collection(db, "users", hostId, "rooms", roomId, "attendees"),
-        where("userId", "==", atendee.userId)
-      );
+    if (isAdmin) {
+      const q = query(attendeesDbRef, where("userId", "==", atendee.userId));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(async (doc) => {
         await deleteDoc(doc.ref);
@@ -239,7 +190,7 @@ export default function RoomPage() {
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <div>RoomPage</div>
+      <div>RoomPage {state.state.roomName}</div>
       <div
         style={{
           width: "100%",
@@ -290,7 +241,7 @@ export default function RoomPage() {
                   backgroundColor: "white",
                 }}
               >
-                {yourProfile?.checkInName}
+                {state.state.checkInName}
               </div>
             </div>
           </div>
@@ -374,7 +325,7 @@ export default function RoomPage() {
                 {atendee.checkInName}
               </div>{" "}
               {atendee.rank}
-              {areYouAdmin ? (
+              {isAdmin ? (
                 <>
                   <div
                     style={{ width: 100, backgroundColor: "green" }}
