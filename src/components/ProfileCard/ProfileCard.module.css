@@ -1,0 +1,36 @@
+.cardContainer{
+    display: flex;
+    background-color: antiquewhite;
+    width: 100%;
+    height: 100%;
+  
+}
+
+.iconContainer{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.iconSpacer{
+    width: 120px;
+    background-color: grey;
+    height: 120px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.dataContainer{
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
