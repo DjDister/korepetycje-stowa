@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import errorFeedback from "./utils/errorMessages";
 import GoogleIcon from "./components/navBar/icons/GoogleIcon";
 import MailIcon from "./components/navBar/icons/MailIcon";
+import LockIcon from "./components/navBar/icons/LockIcon";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -63,12 +64,9 @@ export default function LoginPage() {
       });
   };
 
-  //const found = array1.find(element => element > 10);
   const errorPrint = errorFeedback.find(
     (errorElem) => errorElem.code === formData.error
   );
-  console.log(errorPrint);
-  console.log(formData.error);
 
   const [registerMode, setRegisterMode] = useState(false);
 
@@ -80,12 +78,20 @@ export default function LoginPage() {
           <div className="register">
             {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
           </div>
-          {registerMode ? (
-            <div className="emailAndDoublePassword">
-              <div className="titleAndInputContainer">
-                <div className="emailFont">E-mail</div>
+          <div className="errorPackage">
+            {errorPrint ? (
+              <div className="error">{errorPrint.message}</div>
+            ) : null}
+          </div>
+          <div className="emailAndPassword">
+            <div className="titleAndInputContainer">
+              <div className="emailFont">E-mail</div>
+              <div className="mailIcon">
+                <div className="mailIconIcon">
+                  <MailIcon />
+                </div>
                 <input
-                  className="input"
+                  className="inputEmail"
                   type={"email"}
                   onChange={(e) =>
                     setFormData({ ...formData, login: e.target.value })
@@ -93,55 +99,45 @@ export default function LoginPage() {
                   placeholder="Username/Email"
                 ></input>
               </div>
-              <div className="titleAndInputContainer">
-                <div className="emailFont">Password</div>
+            </div>
+            <div className="titleAndInputContainer">
+              <div className="emailFont">Password</div>
+              <div className="mailIcon">
+                <div className="mailIconIcon">
+                  <LockIcon />
+                </div>
                 <input
-                  className="input"
+                  className="inputEmail"
                   type={"password"}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
+                  placeholder="Password"
                 ></input>
               </div>
-              <div className="titleAndInputContainer">
-                <div className="emailFont">Repeat Password</div>
+            </div>
+          </div>
+          {registerMode ? (
+            <div className="repeatPasswordContainer">
+              <div className="emailFont">Repeat Password</div>
+              <div className="mailIcon">
+                <div className="mailIconIcon">
+                  <LockIcon />
+                </div>
                 <input
-                  className="input"
-                  type={"password"}
+                  className="inputEmail"
+                  type={"Password"}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       passwordRepeated: e.target.value,
                     })
                   }
+                  placeholder="Repeat Password"
                 ></input>
               </div>
             </div>
-          ) : (
-            <div className="emailAndPassword">
-              <div className="titleAndInputContainer">
-                <div className="emailFont">E-mail</div>
-                <input
-                  className="input"
-                  type={"email"}
-                  onChange={(e) =>
-                    setFormData({ ...formData, login: e.target.value })
-                  }
-                  placeholder="Username/Email"
-                ></input>
-              </div>
-              <div className="titleAndInputContainer">
-                <div className="emailFont">Password</div>
-                <input
-                  className="input"
-                  type={"password"}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                ></input>
-              </div>
-            </div>
-          )}
+          ) : null}
 
           <div className="logInAndForgotPassword">
             <div className="logIn" onClick={registerMode ? register : login}>
@@ -170,7 +166,10 @@ export default function LoginPage() {
             {registerMode ? "Masz już konto ?" : "Nie masz jeszcze konta ?"}
             <div
               className="join"
-              onClick={() => setRegisterMode(!registerMode)}
+              onClick={() => {
+                setRegisterMode(!registerMode);
+                setFormData({ ...formData, error: "" });
+              }}
             >
               {registerMode ? "Zaloguj się !" : "Dołącz teraz !"}
             </div>

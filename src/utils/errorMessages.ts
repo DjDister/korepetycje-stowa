@@ -23,6 +23,14 @@ const errorFeedback = [
     code: "auth/email-already-in-use",
     message: "Podany email już istnieje",
   },
+  {
+    code: "Passwords are different",
+    message: "Podane hasła nie są takie same",
+  },
+  {
+    code: "auth/weak-password",
+    message: "Podane hasło jest za słabe",
+  },
 ];
 
 export default errorFeedback;
