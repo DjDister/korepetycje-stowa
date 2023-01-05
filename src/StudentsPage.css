@@ -1,0 +1,18 @@
+input {
+    all: unset;
+  }
+
+
+.pageContainer{
+    width: 100vw;
+    height: 100vh;
+
+}
+
+.flexCenter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10vh;
+}
+

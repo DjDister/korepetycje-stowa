@@ -1,0 +1,31 @@
+.inputContainer{
+    box-sizing: border-box;
+width: 375px;
+height: 48px;
+background: #FFFFFF;
+border: 1px solid #E2E4E8;
+border-radius: 3px;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.input{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 16px;
+    width: 90%;
+    margin-left: 10px;
+}
+
+.iconContainer{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

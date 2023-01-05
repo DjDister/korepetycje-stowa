@@ -4,7 +4,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { firebaseApp } from "./firebaseConfig";
+import { db, firebaseApp } from "./firebaseConfig";
 import "./loginPage.css";
 
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
@@ -14,6 +14,7 @@ import errorFeedback from "./utils/errorMessages";
 import GoogleIcon from "./components/navBar/icons/GoogleIcon";
 import MailIcon from "./components/navBar/icons/MailIcon";
 import LockIcon from "./components/navBar/icons/LockIcon";
+import writeUserToDatabase from "./utils/writeUserToDatabase";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -40,6 +41,7 @@ export default function LoginPage() {
         .then((userCredential) => {
           const user = userCredential.user;
           dispatch(logIn(user));
+          writeUserToDatabase(db, user.uid, formData.login);
         })
         .catch((error) => {
           setFormData({ ...formData, error: error.code });

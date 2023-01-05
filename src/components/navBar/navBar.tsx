@@ -2,19 +2,20 @@ import React, { useState } from "react";
 import styles from "./navbar.module.css";
 import "../../App.css";
 import { useAppSelector } from "../../redux/hooks";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logOut } from "../../redux/loginSlice";
 import { useAppDispatch } from "../../redux/hooks";
 
 const Name = ["Kornik"];
 const navElem = ["Our Teachers", "Our offer", "About us"];
 
-const loggedElem = [
-  { label: "Znajomi" },
-  { label: "Wiadomości" },
-  { label: "Ustawienia" },
-  { label: "Pomoc" },
-  { label: "Wyloguj się" },
+const loggedList = [
+  { label: "Students", url: "/students" },
+  { label: "Profil", url: "/profile" },
+  { label: "Wiadomości", url: "/messages" },
+  { label: "Ustawienia", url: "/settings" },
+  { label: "Pomoc", url: "/help" },
+  { label: "Wyloguj się", url: "/logout" },
 ];
 
 const sub = ["Subjects"];
@@ -27,7 +28,7 @@ function NavBar() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const loginStatus = useAppSelector((state) => state.loginStatus);
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   //loginStatus.isLoggedIn ? tak:nie
   return (
     <div className={styles.mainNav}>
@@ -117,23 +118,23 @@ function NavBar() {
             </div>
             {isUserMenuOpen ? (
               <div className={`${styles.dropdownMenuPage}`}>
-                {loggedElem.map((loggedList) => (
+                {loggedList.map((loggedElem) => (
                   <div
                     className={`${styles.DropdownMenuPageItem}
                     
                   ${
-                    loggedList.label === "Wyloguj się"
+                    loggedElem.label === "Wyloguj się"
                       ? styles.redMenuItem
                       : null
                   }
                 `}
                     onClick={
-                      loggedList.label === "Wyloguj się"
+                      loggedElem.label === "Wyloguj się"
                         ? () => dispatch(logOut())
-                        : () => null
+                        : () => navigate(loggedElem.url)
                     }
                   >
-                    {loggedList.label}
+                    {loggedElem.label}
                   </div>
                 ))}
               </div>
@@ -144,7 +145,7 @@ function NavBar() {
             <Link
               style={{ color: "inherit", textDecoration: "inherit" }}
               className={styles.signButton}
-              to="login"
+              to="/login"
             >
               <div className={styles.signIn}>sign in</div>
             </Link>
