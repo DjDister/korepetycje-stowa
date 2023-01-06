@@ -1,0 +1,92 @@
+.topTeacherCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 30%;
+  min-width: 30%;
+  height: 40vh;
+  border: 2px solid #d3d3d3;
+  border-radius: 5%;
+  box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.pictureAndName {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 2px solid #d3d3d3;
+}
+
+.picture {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  height: 70%;
+  margin-top: 10px;
+  position: relative;
+  border: 2px solid #d3d3d3;
+}
+
+.name {
+  width: 100%;
+  height: 20%;
+  margin-bottom: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: arial;
+  font-style: italic;
+  font-weight: bolder;
+  font-size: 25px;
+}
+
+.statistics {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-left: 5%;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  font-family: arial;
+  font-style: italic;
+  font-weight: bold;
+  height: 25%;
+  width: 100%;
+  font-size: 20px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: arial;
+  font-style: italic;
+  font-weight: bold;
+  height: 15%;
+  width: 50%;
+  font-size: 20px;
+  margin-bottom: 10%;
+  background-color: #5465ff;
+  color: white;
+  border-radius: 10px;
+}
+
+.contact:hover {
+  opacity: 0.9;
+}
+
+.contact:active {
+  opacity: 0.6;
+}

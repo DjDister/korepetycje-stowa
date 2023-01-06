@@ -6,7 +6,6 @@ import {
 } from "firebase/auth";
 import { firebaseApp } from "./firebaseConfig";
 import "./loginPage.css";
-
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { logIn } from "./redux/loginSlice";
 import { useNavigate } from "react-router-dom";
