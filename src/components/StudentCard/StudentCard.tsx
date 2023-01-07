@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Student } from "../../types";
 import Chat from "../Icons/Chat";
 import Phone from "../Icons/Phone";
@@ -11,7 +12,12 @@ export default function StudentCard({
   student: Student;
   customStyles?: React.CSSProperties;
 }) {
-  const icons = [<StudentIcon />, <Chat />, <Phone />];
+  const icons = [
+    { icon: <StudentIcon />, url: "/" },
+    { icon: <Phone />, url: "/" },
+    { icon: <Chat />, url: "/" },
+  ];
+  const navigate = useNavigate();
   return (
     <div className={styles.cardContainer} style={customStyles}>
       <div className={styles.imageContainer}>
@@ -26,7 +32,7 @@ export default function StudentCard({
       <div className={styles.iconsContainer}>
         {icons.map((icon, index) => (
           <div className={styles.iconContainer} key={index}>
-            {icon}
+            <div onClick={() => navigate(icon.url)}>{icon.icon}</div>
           </div>
         ))}
       </div>

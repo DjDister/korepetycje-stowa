@@ -1,4 +1,4 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import PlusIcon from "./components/Icons/PlusIcon";
 import Input from "./components/Input/Input";
@@ -8,7 +8,9 @@ import { db } from "./firebaseConfig";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { updateStudents } from "./redux/profileSlice";
 import "./StudentsPage.css";
+import { Student } from "./types";
 import addUserToUsersStudents from "./utils/addUserToUsersStudents";
+import converter from "./utils/converter";
 import searchForUserWithEmail from "./utils/searchForUserWithEmail";
 export default function StudentsPage() {
   const profile = useAppSelector((state) => state.profile).profile;
@@ -34,15 +36,24 @@ export default function StudentsPage() {
       setWarning("Student not found");
     }
   };
-
   useEffect(() => {
-    onSnapshot(doc(db, "users", profile.uid), (doc) => {
-      const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-      console.log(source, " data: ", doc.data());
-      setStudents(doc.data()?.students);
-      dispatch(updateStudents(doc.data()?.students));
+    const q = query(
+      collection(db, "users", profile.uid, "students").withConverter(
+        converter<Student>()
+      )
+    );
+    onSnapshot(q, (querySnapshot) => {
+      const newStudents: Student[] = [];
+      querySnapshot.forEach((doc) => {
+        const studentToAdd = doc.data();
+        newStudents.push(studentToAdd);
+      });
+      setStudents(newStudents);
+      dispatch(updateStudents(newStudents));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const [filter, setFilter] = useState<string>("");
 
   return (
     <div className="pageContainer">
@@ -60,22 +71,26 @@ export default function StudentsPage() {
             onClick={onAddStudent}
           />
         </div>
-        <div className="studentsListContainer">
-          <div className="containerMargin">
-            <div className="studentsSearchInputContainer">
-              <Input
-                label={"Search"}
-                placeholder={"Search students"}
-                onChange={(e) => setSearchEmail(e.target.value)}
-              />
-            </div>
-            <div className="studentsContainer">
-              {students.map((student, index) => (
-                <StudentCard key={index} student={student} />
-              ))}
+        {students.length > 0 ? (
+          <div className="studentsListContainer">
+            <div className="containerMargin">
+              <div className="studentsSearchInputContainer">
+                <Input
+                  label={"Search"}
+                  placeholder={"Search students"}
+                  onChange={(e) => setFilter(e.target.value)}
+                />
+              </div>
+              <div className="studentsContainer">
+                {students
+                  .filter((student) => student.email.includes(filter))
+                  .map((student, index) => (
+                    <StudentCard key={index} student={student} />
+                  ))}
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );

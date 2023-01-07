@@ -1,6 +1,6 @@
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import { UserProfileData } from "../types";
+import { Student, UserProfileData } from "../types";
 import converter from "./converter";
 
 const addUserToUsersStudents = async (
@@ -9,14 +9,17 @@ const addUserToUsersStudents = async (
   userToAddUid: string,
   photoURL?: string | null
 ) => {
-  const userRef = doc(db, "users", user.uid).withConverter(
-    converter<UserProfileData>()
-  );
-  await updateDoc(userRef, {
-    students: [
-      ...user.students,
-      { email: userToAddEmail, uid: userToAddUid, photoURL: photoURL ?? "" },
-    ],
+  const studentsRef = doc(
+    db,
+    "users",
+    user.uid,
+    "students",
+    userToAddUid
+  ).withConverter(converter<Student>());
+  await setDoc(studentsRef, {
+    email: userToAddEmail,
+    uid: userToAddUid,
+    photoURL: photoURL ?? "",
   });
 };
 export default addUserToUsersStudents;
