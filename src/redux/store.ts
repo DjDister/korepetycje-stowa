@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { query, collection, onSnapshot } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import loginSlice from "./loginSlice";
 import profileSlice from "./profileSlice";
 

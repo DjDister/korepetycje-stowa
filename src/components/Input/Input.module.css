@@ -1,3 +1,27 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.labelContainer{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    
+    font-family: 'General Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 160%;
+
+    color: #4d566d;
+    
+}
+
 .inputContainer{
     box-sizing: border-box;
 width: 375px;
@@ -28,4 +52,21 @@ align-items: center;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+}
+.errorContainer{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    height: 25px;
+    top: calc(100% + 4px);
+}
+.errorText{
+    font-family: 'General Sans';
+font-style: normal;
+font-weight: 600;
+line-height: 160%;
+
+color: #525C76;
 }
