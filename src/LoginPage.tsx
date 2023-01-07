@@ -3,8 +3,9 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  User,
 } from "firebase/auth";
-import { firebaseApp } from "./firebaseConfig";
+import { db, firebaseApp } from "./firebaseConfig";
 import "./loginPage.css";
 
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
@@ -14,7 +15,11 @@ import errorFeedback from "./utils/errorMessages";
 import GoogleIcon from "./components/navBar/icons/GoogleIcon";
 import MailIcon from "./components/navBar/icons/MailIcon";
 import LockIcon from "./components/navBar/icons/LockIcon";
-
+import writeUserToDatabase from "./utils/writeUserToDatabase";
+import { setUserProfile, setUserProfileFirstTime } from "./redux/profileSlice";
+import searchForUserWithEmail from "./utils/searchForUserWithEmail";
+const photoDefault =
+  "https://cdn.midjourney.com/2cd09984-a602-4b3d-bc3b-e565bfba82b1/grid_0.png";
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     login: "",
@@ -38,8 +43,18 @@ export default function LoginPage() {
     if (formData.password === formData.passwordRepeated) {
       createUserWithEmailAndPassword(auth, formData.login, formData.password)
         .then((userCredential) => {
-          const user = userCredential.user;
+          const user: User = {
+            ...userCredential.user,
+            providerData: [
+              {
+                ...userCredential.user.providerData[0],
+                photoURL: photoDefault,
+              },
+            ],
+          };
           dispatch(logIn(user));
+          dispatch(setUserProfileFirstTime(user));
+          writeUserToDatabase(db, user);
         })
         .catch((error) => {
           setFormData({ ...formData, error: error.code });
@@ -52,10 +67,11 @@ export default function LoginPage() {
 
   const login = () => {
     signInWithEmailAndPassword(auth, formData.login, formData.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
         dispatch(logIn(user)); //some issue with type of user  - redux non serializable value error
-        // ...
+        const userData = await searchForUserWithEmail(user.email ?? "");
+        if (userData) dispatch(setUserProfile(userData));
         navigate("/");
       })
       .catch((error) => {
