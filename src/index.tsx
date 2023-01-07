@@ -6,10 +6,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import LoginPage from "./LoginPage";
-import RegisterPage from "./RegisterPage";
 import RoomsPage from "./RoomsPage";
 import RoomPage from "./RoomPage";
 import CheckInRoom from "./CheckInRoom";
+import StudentsPage from "./StudentsPage";
 
 const router = createBrowserRouter([
   {
@@ -20,10 +20,14 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
-  { path: "register", element: <RegisterPage /> },
+
   { path: "/rooms", element: <RoomsPage /> },
   { path: "room/:userId/:roomId/checkin", element: <CheckInRoom /> },
   { path: "/room/:userId/:roomId", element: <RoomPage /> },
+  {
+    path: "/students",
+    element: <StudentsPage />,
+  },
 ]);
 
 const root = ReactDOM.createRoot(
