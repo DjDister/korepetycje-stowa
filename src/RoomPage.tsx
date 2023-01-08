@@ -32,17 +32,20 @@ export default function RoomPage() {
   const hostId = state.pathname.substring(6, 34);
   const roomId = state.pathname.substring(35, 55);
   const isAdmin = hostId === loginStatus.user?.uid;
-  const callDoc = doc(db, "users", hostId, "rooms", roomId, "calls", roomId);
-  const answerCandidates = collection(callDoc, "answerCandidates");
-  const offerCandidates = collection(callDoc, "offerCandidates");
-  const attendeesDbRef = collection(
+
+  const roomDoc = doc(
     db,
     "users",
-    hostId,
-    "rooms",
-    roomId,
-    "attendees"
+    state.state.belongsToUserId,
+    "students",
+    state.state.studentId,
+    "lessons",
+    state.state.lesson.id
   );
+  const callDoc = doc(roomDoc, "calls", roomId);
+  const answerCandidates = collection(callDoc, "answerCandidates");
+  const offerCandidates = collection(callDoc, "offerCandidates");
+  const attendeesDbRef = collection(roomDoc, "attendees");
   useEffect(() => {
     const q = query(attendeesDbRef);
     onSnapshot(q, (querySnapshot) => {
@@ -54,7 +57,7 @@ export default function RoomPage() {
       }, []);
       setAttendees(fetchAtendees);
     });
-  }, []);
+  }, [attendeesDbRef]);
 
   const [webcamActive, setWebcamActive] = useState(false);
 
@@ -149,7 +152,6 @@ export default function RoomPage() {
 
   const hangUp = async () => {
     pc.close();
-
     await deleteDoc(callDoc);
   };
 

@@ -85,7 +85,12 @@ export default function StudentsPage() {
                 {students
                   .filter((student) => student.email.includes(filter))
                   .map((student, index) => (
-                    <StudentCard key={index} student={student} />
+                    <StudentCard
+                      key={index}
+                      student={student}
+                      studentId={student.uid}
+                      belongsToUserId={profile.uid}
+                    />
                   ))}
               </div>
             </div>

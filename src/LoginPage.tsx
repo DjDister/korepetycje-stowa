@@ -37,7 +37,7 @@ export default function LoginPage() {
     if (loginStatus.isLoggedIn) {
       navigate("/");
     }
-  }, [loginStatus.isLoggedIn]);
+  }, [loginStatus.isLoggedIn, navigate]);
 
   const register = () => {
     if (formData.password === formData.passwordRepeated) {
@@ -53,8 +53,8 @@ export default function LoginPage() {
             ],
           };
           dispatch(logIn(user));
-          dispatch(setUserProfileFirstTime(user));
-          writeUserToDatabase(db, user);
+          dispatch(setUserProfileFirstTime({ user: user, type: accType }));
+          writeUserToDatabase(db, user, accType);
         })
         .catch((error) => {
           setFormData({ ...formData, error: error.code });
@@ -85,7 +85,7 @@ export default function LoginPage() {
   );
 
   const [registerMode, setRegisterMode] = useState(false);
-
+  const [accType, setAccType] = useState<"student" | "teacher">("student");
   return (
     <div className="wholePage">
       <div className="card"></div>
@@ -154,7 +154,33 @@ export default function LoginPage() {
               </div>
             </div>
           ) : null}
-
+          {registerMode ? (
+            <div>
+              Choose account type:
+              <div className="buttonsContainer">
+                <div
+                  style={
+                    accType === "teacher"
+                      ? { borderBottom: "green 2px solid" }
+                      : {}
+                  }
+                  onClick={() => setAccType("teacher")}
+                >
+                  Teacher
+                </div>
+                <div
+                  style={
+                    accType === "student"
+                      ? { borderBottom: "green 2px solid" }
+                      : {}
+                  }
+                  onClick={() => setAccType("student")}
+                >
+                  Student
+                </div>
+              </div>
+            </div>
+          ) : null}
           <div className="logInAndForgotPassword">
             <div className="logIn" onClick={registerMode ? register : login}>
               {registerMode ? "Register" : "Login"}
@@ -194,7 +220,7 @@ export default function LoginPage() {
       </div>
       <div className="rightSide">
         <div className="insideRight">
-          <img src={require("./Panda.png")} />
+          <img alt="loginImage" src={require("./Panda.png")} />
         </div>
       </div>
     </div>

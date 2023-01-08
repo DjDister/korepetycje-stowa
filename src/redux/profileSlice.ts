@@ -13,7 +13,7 @@ const initialState: ProfileSlice = {
     email: "",
     emailVerified: false,
     isAnonymous: false,
-
+    type: "student",
     providerData: [
       {
         providerId: "",
@@ -32,11 +32,15 @@ export const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    setUserProfileFirstTime: (state, action: PayloadAction<User>) => {
+    setUserProfileFirstTime: (
+      state,
+      action: PayloadAction<{ user: User; type: "student" | "teacher" }>
+    ) => {
       state.profile = {
-        ...action.payload,
+        ...action.payload.user,
+        type: action.payload.type,
         students: [],
-        email: action.payload.email || "",
+        email: action.payload.user.email || "",
       };
     },
     setUserProfile: (state, action: PayloadAction<UserProfileData>) => {

@@ -4,91 +4,112 @@ import { db } from "./firebaseConfig";
 import {
   collection,
   addDoc,
-  doc,
-  setDoc,
   query,
-  where,
-  getDocs,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import { useAppSelector } from "./redux/hooks";
-import { useNavigate } from "react-router-dom";
-import RoomItem from "./components/RoomItem/RoomItem";
+import { useLocation, useNavigate } from "react-router-dom";
+import LessonItem from "./components/LessonItem/LessonItem";
 import "./RoomsPage.css";
-type Room = {
-  roomName: string;
-  id: string;
-};
+import { Room } from "./types";
+import Input from "./components/Input/Input";
+import PlusIcon from "./components/Icons/PlusIcon";
 
-export default function RoomsPage() {
+export default function LessonsPage() {
   const [newRoomName, setNewRoomName] = useState("");
   const [activeRooms, setActiveRooms] = useState<Room[]>([]);
+  const { state } = useLocation();
   const navigate = useNavigate();
   const loginStatus = useAppSelector((state) => state.loginStatus);
-  console.log(loginStatus);
+  const areYouAdmin = state.belongsToUserId === loginStatus.user?.uid;
   useEffect(() => {
     if (!loginStatus.isLoggedIn) {
       navigate("/login");
     }
-  }, []);
+    if (!state) {
+      navigate("/students");
+    }
+  }, [loginStatus.isLoggedIn, navigate, state]);
   useEffect(() => {
-    const fetchRooms = async () => {
-      if (loginStatus.user) {
-        const q = query(collection(db, "users", loginStatus.user.uid, "rooms"));
+    if ((state.belongsToUserId, state.studentId)) {
+      const q = query(
+        collection(
+          db,
+          "users",
+          state.belongsToUserId,
+          "students",
+          state.studentId,
+          "lessons"
+        )
+      );
 
-        const querySnapshot = await getDocs(q);
+      onSnapshot(q, (querySnapshot) => {
         const fetchedRooms: Room[] = [];
         querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
           const room: Room = {
             roomName: doc.data().roomName,
             id: doc.id,
+            createdAt:
+              doc.data().createdAt &&
+              doc.data().createdAt.toDate &&
+              doc.data().createdAt.toDate()
+                ? doc.data().createdAt.toDate()
+                : new Date(),
           };
           fetchedRooms.push(room);
-        }, []);
+        });
+
         setActiveRooms(fetchedRooms);
-      }
-    };
-    fetchRooms();
-  }, []);
+      });
+    }
+  }, [state.belongsToUserId, state.studentId]);
 
   const createRoom = async () => {
-    if (loginStatus.user) {
-      const userRef = doc(db, "users", loginStatus.user.uid);
-      await setDoc(userRef, loginStatus.user);
-      const roomsRef = collection(db, "users", loginStatus.user.uid, "rooms");
+    if ((state.belongsToUserId, state.studentId)) {
+      const roomsRef = collection(
+        db,
+        "users",
+        state.belongsToUserId,
+        "students",
+        state.studentId,
+        "lessons"
+      );
 
-      const newRoom = await addDoc(roomsRef, {
+      await addDoc(roomsRef, {
         roomName: newRoomName,
         createdAt: serverTimestamp(),
       });
-
-      setActiveRooms((prev) => [
-        ...prev,
-        {
-          roomName: newRoomName,
-          id: newRoom.id,
-        },
-      ]);
     }
   };
   return (
     <div>
       <NavBar />
       <div className="pageContainer">
-        <div className="title">Create room: </div>
-        <input
-          placeholder="Room Id"
-          onChange={(e) => setNewRoomName(e.target.value)}
-        />
-        <div onClick={() => createRoom()}>Create</div>
-        <div className="title">Your rooms: </div>
+        <div className="newRoomContainer">
+          {areYouAdmin && (
+            <>
+              <div className="titleNewLesson">New lesson </div>
+              <div className="inputContainer">
+                <Input
+                  placeholder="Name"
+                  onChange={(e) => setNewRoomName(e.target.value)}
+                  icon={<PlusIcon />}
+                  onClick={createRoom}
+                />
+              </div>
+            </>
+          )}
+        </div>
+        <div className="title">Lessons: </div>
         <div className="roomsListContainer">
-          {activeRooms.map((room, index) => (
-            <RoomItem
+          {activeRooms.map((lesson, index) => (
+            <LessonItem
               key={index}
-              userId={loginStatus.user ? loginStatus.user.uid : ""}
-              room={room}
+              belongsToUserId={state.belongsToUserId}
+              studentId={state.studentId}
+              lesson={lesson}
+              customStyle={{ marginBottom: "10px" }}
             />
           ))}
         </div>

@@ -11,6 +11,7 @@ const navElem = ["Our Teachers", "Our offer", "About us"];
 
 const loggedList = [
   { label: "Students", url: "/students" },
+  { label: "Teachers", url: "/teachers" },
   { label: "Profil", url: "/profile" },
   { label: "Wiadomości", url: "/messages" },
   { label: "Ustawienia", url: "/settings" },
@@ -27,6 +28,7 @@ function NavBar() {
   const [open, setOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const loginStatus = useAppSelector((state) => state.loginStatus);
+  const { profile } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   //loginStatus.isLoggedIn ? tak:nie
@@ -118,9 +120,16 @@ function NavBar() {
             </div>
             {isUserMenuOpen ? (
               <div className={`${styles.dropdownMenuPage}`}>
-                {loggedList.map((loggedElem) => (
-                  <div
-                    className={`${styles.DropdownMenuPageItem}
+                {loggedList
+                  .filter(
+                    (elem) =>
+                      elem.label
+                        .toLowerCase()
+                        .slice(0, elem.label.length - 1) !== profile.type
+                  )
+                  .map((loggedElem) => (
+                    <div
+                      className={`${styles.DropdownMenuPageItem}
                     
                   ${
                     loggedElem.label === "Wyloguj się"
@@ -128,15 +137,15 @@ function NavBar() {
                       : null
                   }
                 `}
-                    onClick={
-                      loggedElem.label === "Wyloguj się"
-                        ? () => dispatch(logOut())
-                        : () => navigate(loggedElem.url)
-                    }
-                  >
-                    {loggedElem.label}
-                  </div>
-                ))}
+                      onClick={
+                        loggedElem.label === "Wyloguj się"
+                          ? () => dispatch(logOut())
+                          : () => navigate(loggedElem.url)
+                      }
+                    >
+                      {loggedElem.label}
+                    </div>
+                  ))}
               </div>
             ) : null}
           </div>
