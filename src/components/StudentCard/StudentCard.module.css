@@ -47,10 +47,11 @@ cursor: pointer;
 .nameContainer{
   font-family: 'Nexa';
   width: 70%;
+  overflow: hidden;
   font-style: normal;
   font-weight: 900;
   font-size: 20px;
   line-height: 24px;
   color: #3C3C3C;
-  overflow-wrap: ellipsis;
+  text-overflow: ellipsis;
 }
