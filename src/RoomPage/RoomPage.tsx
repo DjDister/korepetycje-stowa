@@ -11,11 +11,14 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { db } from "./firebaseConfig";
-import { useAppSelector } from "./redux/hooks";
-import servers from "./webRTCConfig";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import ArrowLeft from "../components/Icons/ArrowLeft";
+import Door from "../components/Icons/Door";
+import VideoCamera from "../components/Icons/VideoCamera";
+import { db } from "../firebaseConfig";
+import { useAppSelector } from "../redux/hooks";
+import servers from "../webRTCConfig";
+import styles from "./RoomPage.module.css";
 type Atendee = {
   checkInName: string;
   userId: string;
@@ -26,7 +29,10 @@ type Atendee = {
 const pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
+  //issue with joing a room second time - addtracks failed because the peerconnection was closed
+
   const [attendees, setAttendees] = useState<Atendee[]>([]);
+  const [otherUser, setOtherUser] = useState<Atendee | undefined>(undefined);
   const state = useLocation();
   const loginStatus = useAppSelector((state) => state.loginStatus);
   const hostId = state.pathname.substring(6, 34);
@@ -55,12 +61,18 @@ export default function RoomPage() {
 
         fetchAtendees.push(atendee);
       }, []);
+
       setAttendees(fetchAtendees);
     });
-  }, [attendeesDbRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setOtherUser(attendees.find((a) => a.userId !== loginStatus.user?.uid));
+  }, [attendees, loginStatus.user?.uid]);
 
   const [webcamActive, setWebcamActive] = useState(false);
-
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
   const setupSources = async () => {
@@ -72,7 +84,7 @@ export default function RoomPage() {
     localStream.getTracks().forEach((track) => {
       pc.addTrack(track, localStream);
     });
-
+    setLocalStream(localStream);
     pc.ontrack = (event) => {
       event.streams[0].getTracks().forEach((track) => {
         remoteStream.addTrack(track);
@@ -81,8 +93,8 @@ export default function RoomPage() {
     if (localRef.current && remoteRef.current) {
       localRef.current.srcObject = localStream;
       remoteRef.current.srcObject = remoteStream;
-      setWebcamActive(true);
     }
+    setWebcamActive(true);
 
     if (isAdmin) {
       pc.onicecandidate = (event) => {
@@ -149,10 +161,21 @@ export default function RoomPage() {
       });
     }
   };
-
+  const navigate = useNavigate();
   const hangUp = async () => {
     pc.close();
+    if (localRef.current) localRef.current.srcObject = null;
+    localStream?.getTracks().forEach((track) => track.stop());
+    setWebcamActive(false);
     await deleteDoc(callDoc);
+    await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
+    navigate(`/lessons`, {
+      state: {
+        studentId: state.state.studentId,
+        belongsToUserId: state.state.belongsToUserId,
+        refresh: true,
+      },
+    });
   };
 
   pc.onconnectionstatechange = (event) => {
@@ -190,156 +213,79 @@ export default function RoomPage() {
     }
   };
 
+  const [hovering, setHovering] = useState(false);
+
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
-      <div>RoomPage {state.state.roomName}</div>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{ width: "70%", height: "70vh", backgroundColor: "grey" }}
-        ></div>
-        <div style={{ display: "flex", flexDirection: "column", width: "20%" }}>
-          <div
-            style={{
-              width: "100%",
-              height: "20vh",
-              backgroundColor: "greenyellow",
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "relative",
-              }}
-            >
-              <video
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                ref={localRef}
-                autoPlay
-                playsInline
-              ></video>
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "5px",
-                  right: "5px",
-                  zIndex: 10,
-                  paddingTop: "2px",
-                  paddingBottom: "2px",
-                  paddingLeft: "8px",
-                  paddingRight: "8px",
-                  borderRadius: "10px",
-                  backgroundColor: "white",
-                }}
-              >
-                {state.state.checkInName}
-              </div>
-            </div>
+    <div className={styles.pageContainer}>
+      <div className={styles.whiteboardContainer}>
+        <div className={styles.roomDetailsContainer}>
+          <div className={styles.leaveButton} onClick={hangUp}>
+            <ArrowLeft />
           </div>
+          <div className={styles.roomNameConatiner}>{state.state.roomName}</div>
+        </div>
+
+        <div className={styles.yourCameraContainer}>
           <div
-            style={{
-              width: "100%",
-              height: "20vh",
-              backgroundColor: "greenyellow",
-            }}
+            className={styles.cameraRelativeContainer}
+            onMouseEnter={webcamActive ? () => setHovering(true) : undefined}
+            onMouseLeave={webcamActive ? () => setHovering(false) : undefined}
           >
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "relative",
-              }}
-            >
-              <video
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                ref={remoteRef}
-                autoPlay
-                playsInline
-              ></video>
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "5px",
-                  right: "5px",
-                  zIndex: 10,
-                  paddingTop: "2px",
-                  paddingBottom: "2px",
-                  paddingLeft: "8px",
-                  paddingRight: "8px",
-                  borderRadius: "10px",
-                  backgroundColor: "white",
-                }}
-              >
-                other
-              </div>
+            <div className={styles.nameTagCamera}>
+              {state.state.checkInName}
             </div>
+            <video
+              className={styles.video}
+              ref={localRef}
+              autoPlay
+              playsInline
+            ></video>
+            {webcamActive ? (
+              hovering ? (
+                <div
+                  style={
+                    hovering
+                      ? {
+                          zIndex: 2,
+                          position: "absolute",
+                          backgroundColor: "white",
+                          opacity: 0.5,
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                        }
+                      : {}
+                  }
+                >
+                  <div className={styles.joinButtonContainer} onClick={hangUp}>
+                    <Door />
+                  </div>
+                </div>
+              ) : null
+            ) : (
+              <div
+                className={styles.joinButtonContainer}
+                onClick={setupSources}
+              >
+                <VideoCamera />
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      <div onClick={setupSources}> setup</div>
-      <div onClick={hangUp}>hangup</div>
-      <div>
-        {attendees
-          .filter((atendee) => atendee.accepted === "true")
-          .map((atendee, index) => (
-            <div key={index} style={{ display: "flex" }}>
-              <div
-                style={
-                  atendee.userId === loginStatus.user?.uid
-                    ? { color: "green" }
-                    : {}
-                }
-              >
-                {atendee.checkInName}
-              </div>{" "}
-              {atendee.rank}
+        <div className={styles.otherUserCameraContainer}>
+          <div className={styles.cameraRelativeContainer}>
+            <div className={styles.nameTagCamera}>
+              {otherUser?.checkInName ?? "Waiting for other user"}
             </div>
-          ))}
-      </div>
-      <div>
-        Pedning to join:
-        {attendees
-          .filter((atendee) => atendee.accepted === "false")
-          .map((atendee, index) => (
-            <div key={index} style={{ display: "flex" }}>
-              <div
-                style={
-                  atendee.userId === loginStatus.user?.uid
-                    ? { color: "green" }
-                    : {}
-                }
-              >
-                {atendee.checkInName}
-              </div>{" "}
-              {atendee.rank}
-              {isAdmin ? (
-                <>
-                  <div
-                    style={{ width: 100, backgroundColor: "green" }}
-                    onClick={() => acceptUser(atendee)}
-                  >
-                    Accept
-                  </div>
-                  <div onClick={() => removeUser(atendee)}>remove </div>
-                </>
-              ) : null}
-            </div>
-          ))}
+            <video
+              className={styles.video}
+              ref={remoteRef}
+              autoPlay
+              playsInline
+            ></video>
+          </div>
+        </div>
       </div>
     </div>
   );
