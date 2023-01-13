@@ -8,14 +8,22 @@ import styles from "./StudentCard.module.css";
 export default function StudentCard({
   student,
   customStyles,
+  belongsToUserId,
+  studentId,
 }: {
   student: Student;
   customStyles?: React.CSSProperties;
+  belongsToUserId: string;
+  studentId: string;
 }) {
   const icons = [
-    { icon: <StudentIcon />, url: "/" },
-    { icon: <Phone />, url: "/" },
-    { icon: <Chat />, url: "/" },
+    {
+      icon: <StudentIcon />,
+      url: "/lessons",
+      params: { studentId: studentId, belongsToUserId: belongsToUserId },
+    },
+    { icon: <Phone />, url: "/", params: null },
+    { icon: <Chat />, url: "/", params: null },
   ];
   const navigate = useNavigate();
   return (
@@ -32,7 +40,9 @@ export default function StudentCard({
       <div className={styles.iconsContainer}>
         {icons.map((icon, index) => (
           <div className={styles.iconContainer} key={index}>
-            <div onClick={() => navigate(icon.url)}>{icon.icon}</div>
+            <div onClick={() => navigate(icon.url, { state: icon.params })}>
+              {icon.icon}
+            </div>
           </div>
         ))}
       </div>

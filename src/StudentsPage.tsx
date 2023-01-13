@@ -61,7 +61,7 @@ export default function StudentsPage() {
         <NavBar />
       </div>
       <div className="flexCenter">
-        <div className="inputContainer">
+        <div className="inputContaine">
           <Input
             label={"Add student"}
             icon={<PlusIcon />}
@@ -85,12 +85,21 @@ export default function StudentsPage() {
                 {students
                   .filter((student) => student.email.includes(filter))
                   .map((student, index) => (
-                    <StudentCard key={index} student={student} />
+                    <StudentCard
+                      key={index}
+                      student={student}
+                      studentId={student.uid}
+                      belongsToUserId={profile.uid}
+                    />
                   ))}
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="emptyStudentsContainer">
+            No students added yet - add them above
+          </div>
+        )}
       </div>
     </div>
   );

@@ -107,7 +107,11 @@
   font-family: arial;
   color: #d3d3d3;
 }
-
+.buttonsContainer{
+  display: flex;
+  justify-content:space-between;
+  width: 100%;
+}
 .inputEmail {
   all: unset;
   width: 95%;

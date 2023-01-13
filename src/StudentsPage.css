@@ -17,27 +17,29 @@ input {
 
 .flexCenter{
     display: flex;
-    align-items: center;
     flex-direction: column;
-height: 90%;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+    width: 90%;
 }
 
-.inputContainer{
-    height: 40%;
+.inputContaine{
+ margin-top: 50px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-
     align-items: center;
+    justify-content: center;
 }
+
 .studentsListContainer{
     align-self: left;
     width: 100%;
-   
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 200px;
 }
 .containerMargin{
     width: 90%;
@@ -54,4 +56,15 @@ height: 90%;
     flex-wrap: wrap;
     flex-direction: row;
     gap: 80px;
+}
+
+.emptyStudentsContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    font-weight: 700;
 }
