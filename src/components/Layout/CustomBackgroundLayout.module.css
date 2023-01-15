@@ -1,0 +1,10 @@
+.customLayoutBackground{
+    z-index: -100;
+    position:fixed;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(246,190,141);
+background: linear-gradient(0deg, rgba(246,190,141,1) 0%, rgba(251,208,170,1) 56%, rgba(251,232,203,1) 100%);
+}

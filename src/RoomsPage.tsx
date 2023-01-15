@@ -15,6 +15,7 @@ import "./RoomsPage.css";
 import { Room } from "./types";
 import Input from "./components/Input/Input";
 import PlusIcon from "./components/Icons/PlusIcon";
+import Layout from "./components/Layout/Layout";
 
 export default function LessonsPage() {
   const [newRoomName, setNewRoomName] = useState("");
@@ -83,8 +84,7 @@ export default function LessonsPage() {
     }
   };
   return (
-    <div>
-      <NavBar />
+    <Layout>
       <div className="pageContainer">
         <div className="newRoomContainer">
           {areYouAdmin && (
@@ -114,6 +114,6 @@ export default function LessonsPage() {
           ))}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

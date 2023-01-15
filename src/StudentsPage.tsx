@@ -2,6 +2,7 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import PlusIcon from "./components/Icons/PlusIcon";
 import Input from "./components/Input/Input";
+import Layout from "./components/Layout/Layout";
 import NavBar from "./components/navBar/navBar";
 import StudentCard from "./components/StudentCard/StudentCard";
 import { db } from "./firebaseConfig";
@@ -56,10 +57,7 @@ export default function StudentsPage() {
   const [filter, setFilter] = useState<string>("");
 
   return (
-    <div className="pageContainer">
-      <div className="navbarContainer">
-        <NavBar />
-      </div>
+    <Layout>
       <div className="flexCenter">
         <div className="inputContaine">
           <Input
@@ -101,6 +99,6 @@ export default function StudentsPage() {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }
