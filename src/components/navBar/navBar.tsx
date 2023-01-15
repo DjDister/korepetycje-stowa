@@ -38,8 +38,8 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
           </div>
         </div>
         <div className={styles.middleContainer}>
-          {navElemMiddle.map((element) => (
-            <div className={styles.middleLinkContainer}>
+          {navElemMiddle.map((element, index) => (
+            <div key={index} className={styles.middleLinkContainer}>
               <div className={styles.flexCenter}>{element}</div>
             </div>
           ))}
@@ -50,8 +50,8 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
                   elem.label.toLowerCase().slice(0, elem.label.length - 1) !==
                   profile.type
               )
-              .map((element) => (
-                <div className={styles.middleLinkContainer}>
+              .map((element, index) => (
+                <div key={index} className={styles.middleLinkContainer}>
                   <Link style={{ textDecoration: "none" }} to={element.url}>
                     <div className={styles.flexCenter}>{element.label}</div>
                   </Link>

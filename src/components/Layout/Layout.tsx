@@ -1,10 +1,11 @@
 import React from "react";
 import NavBar from "../navBar/navBar";
+import CustomBackgroundLayout from "./CustomBackgroundLayout";
 
 export default function Layout({
   children,
   isNavbarVisible = true,
-  isBackgroundDecorationVisible,
+  isBackgroundDecorationVisible = true,
   navbarCustomStyles,
 }: {
   children: React.ReactNode;
@@ -13,7 +14,8 @@ export default function Layout({
   navbarCustomStyles?: React.CSSProperties;
 }) {
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+      {isBackgroundDecorationVisible && <CustomBackgroundLayout />}
       {isNavbarVisible && (
         <div style={{ height: "10%" }}>
           <NavBar customStyles={navbarCustomStyles} />
