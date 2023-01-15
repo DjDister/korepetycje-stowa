@@ -1,11 +1,11 @@
 import "./App.css";
+import Layout from "./components/Layout/Layout";
 
-import NavBar from "./components/navBar/navBar";
 function App() {
   return (
-    <div>
-      <NavBar />
-    </div>
+    <Layout>
+      <div style={{ width: "100%", height: "100%" }}></div>
+    </Layout>
   );
 }
 
