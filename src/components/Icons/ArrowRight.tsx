@@ -12,7 +12,7 @@ export default function ArrowRight() {
       <path
         d="M1.25 1.41675L6.29167 6.45841L1.25 11.5001"
         stroke="#8C8C8C"
-        stroke-width="2"
+        strokeWidth="2"
       />
     </svg>
   );

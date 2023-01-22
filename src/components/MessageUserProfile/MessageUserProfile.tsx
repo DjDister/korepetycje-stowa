@@ -7,12 +7,14 @@ export default function MessageUserProfile({
   message,
   customStyles,
   onClick,
+  isSeen = true,
 }: {
   iconUrl: string;
   name: string;
   message: string;
   customStyles?: React.CSSProperties;
   onClick?: () => void;
+  isSeen?: boolean;
 }) {
   return (
     <div className={styles.container} style={customStyles}>
@@ -27,6 +29,16 @@ export default function MessageUserProfile({
           <div className={styles.messageLabel}>{message}</div>
         </div>
       </div>
+      {!isSeen && (
+        <div
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            backgroundColor: "#5183F4",
+          }}
+        />
+      )}
       <div className={styles.iconContainer} onClick={onClick}>
         <ArrowRight />
       </div>
