@@ -1,0 +1,140 @@
+import { query, collection, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import ArrowRight from "../../components/Icons/ArrowRight";
+import Input from "../../components/Input/Input";
+import Layout from "../../components/Layout/Layout";
+import MessageUserProfile from "../../components/MessageUserProfile/MessageUserProfile";
+import { db } from "../../firebaseConfig";
+import { useAppSelector } from "../../redux/hooks";
+import { Message, Student, Teacher, UserMessages } from "../../types";
+import converter from "../../utils/converter";
+import styles from "./MessagesPage.module.css";
+export default function MessagesPage() {
+  const profile = useAppSelector((state) => state.profile).profile;
+  const [messages, setMessages] = useState<UserMessages[]>([]);
+  const [studentsOrTeachers, setStudentsOrTeachers] = useState<
+    Student[] | Teacher[]
+  >([]);
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const q = query(
+        collection(
+          db,
+          "users",
+          profile.uid,
+          profile.type === "student" ? "teachers" : "students"
+        )
+      ).withConverter(converter<Teacher | Student>());
+      const querySnapshot = await getDocs(q);
+      const newStudentsOrTeachers: Student[] | Teacher[] = [];
+      querySnapshot.forEach((doc) => {
+        newStudentsOrTeachers.push(doc.data());
+      });
+      setStudentsOrTeachers(newStudentsOrTeachers);
+    };
+    fetchStudents();
+  }, [profile.type, profile.uid]);
+
+  useEffect(() => {
+    const fetchMessages = async (studentOrTeacher: Student | Teacher) => {
+      const newMessages: UserMessages[] = [];
+      const q = query(
+        collection(
+          db,
+          "users",
+          profile.uid,
+          profile.type === "student" ? "teachers" : "students",
+          studentOrTeacher.uid,
+          "messages"
+        )
+      ).withConverter(converter<Message>());
+      const querySnapshot = await getDocs(q);
+      const userMessages: Message[] = [];
+      querySnapshot.forEach((doc) => {
+        userMessages.push(doc.data());
+      });
+
+      newMessages.push({
+        ...studentOrTeacher,
+        messages: userMessages,
+      });
+
+      setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+      setChosenUser(messages[0]);
+    };
+    studentsOrTeachers.forEach((studentOrTeacher) => {
+      fetchMessages(studentOrTeacher);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile.type, profile.uid, studentsOrTeachers]);
+
+  const [chosenUser, setChosenUser] = useState<UserMessages>(messages[0]);
+  const [search, setSearch] = useState<string>("");
+  const [messageToSend, setMessageToSend] = useState<string>("");
+  return (
+    <Layout>
+      <div className={styles.pageSplitter}>
+        <div className={styles.latestsMessagesContainer}>
+          <div className={styles.labelContainer}>
+            <div className={styles.chatsTitle}>Chats</div>
+            <Input
+              style={{ width: "100%" }}
+              placeholder="Search"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          {messages
+            .filter((mess) => mess.email.includes(search))
+            .map((message, index) => (
+              <MessageUserProfile
+                customStyles={{ width: "100%" }}
+                key={index}
+                iconUrl={message.photoURL}
+                name={message.email}
+                message={message.messages[0] ? message.messages[0].text : ""}
+                onClick={() => {
+                  setChosenUser(message);
+                }}
+              />
+            ))}
+        </div>
+        {chosenUser ? (
+          <div className={styles.chatContainer}>
+            <div className={styles.userChatContainer}>
+              <div className={styles.chosenUserContainer}>
+                <img
+                  className={styles.userIcon}
+                  src={chosenUser.photoURL}
+                  alt="UserPic"
+                />
+                <div className={styles.userName}>{chosenUser.email}</div>
+              </div>
+              <div className={styles.messagesContainer}>
+                {chosenUser.messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={
+                      message.sendBy === profile.uid
+                        ? styles.messageByYou
+                        : styles.messageByOtherUser
+                    }
+                  >
+                    {message.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className={styles.sendMessageContainer}>
+              <Input
+                style={{ width: "100%" }}
+                placeholder="Type your message"
+                onChange={(e) => setMessageToSend(e.target.value)}
+                icon={<ArrowRight />}
+              />
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </Layout>
+  );
+}

@@ -28,6 +28,12 @@ export type Teacher = {
   photoURL: string;
 };
 
-export interface Message extends Teacher, Student {
-  messages: { text: string; isSeen: boolean }[];
+export interface UserMessages extends Teacher, Student {
+  messages: Message[];
+}
+
+export interface Message {
+  text: string;
+  isSeen: boolean;
+  sendBy: string;
 }
