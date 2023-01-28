@@ -1,4 +1,5 @@
 import { UserInfo } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 
 export type accType = "student" | "teacher";
 
@@ -36,4 +37,5 @@ export interface Message {
   text: string;
   isSeen: boolean;
   sendBy: string;
+  createdAt: Timestamp;
 }

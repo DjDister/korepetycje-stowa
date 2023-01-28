@@ -1,4 +1,10 @@
-import React from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebaseConfig";
+import { useAppSelector } from "../../redux/hooks";
+import { Message } from "../../types";
+import converter from "../../utils/converter";
+import sortMessByTimeStamp from "../../utils/sortMessByTimeStamp";
 import ArrowRight from "../Icons/ArrowRight";
 import styles from "./MessageUserProfile.module.css";
 export default function MessageUserProfile({
@@ -7,15 +13,42 @@ export default function MessageUserProfile({
   message,
   customStyles,
   onClick,
+  uid,
   isSeen = true,
 }: {
   iconUrl: string;
   name: string;
+  uid: string;
   message: string;
   customStyles?: React.CSSProperties;
   onClick?: () => void;
   isSeen?: boolean;
 }) {
+  const { profile } = useAppSelector((state) => state.profile);
+  const [newMessage, setNewMessage] = useState<Message | undefined>(undefined);
+  useEffect(() => {
+    onSnapshot(
+      collection(
+        db,
+        "users",
+        profile.uid,
+        profile.type === "student" ? "teachers" : "students",
+        uid,
+        "messages"
+      ).withConverter(converter<Message>()),
+      (querySnapshot) => {
+        const userMessages: Message[] = [];
+        querySnapshot.forEach((doc) => {
+          userMessages.push(doc.data());
+        });
+        const newestMess =
+          sortMessByTimeStamp(userMessages)[userMessages.length - 1];
+
+        setNewMessage(newestMess);
+      }
+    );
+  }, [profile.type, profile.uid, uid]);
+
   return (
     <div className={styles.container} style={customStyles}>
       <div className={styles.wrapper}>
@@ -26,7 +59,9 @@ export default function MessageUserProfile({
         </div>
         <div className={styles.nameMessageContainer}>
           <div className={styles.nameLabel}>{name}</div>
-          <div className={styles.messageLabel}>{message}</div>
+          <div className={styles.messageLabel}>
+            {newMessage ? newMessage.text : message}
+          </div>
         </div>
       </div>
       {!isSeen && (

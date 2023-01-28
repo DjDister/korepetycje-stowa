@@ -1,4 +1,12 @@
-import { query, collection, getDocs } from "firebase/firestore";
+import {
+  query,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+  Timestamp,
+  onSnapshot,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import ArrowRight from "../../components/Icons/ArrowRight";
 import Input from "../../components/Input/Input";
@@ -8,13 +16,18 @@ import { db } from "../../firebaseConfig";
 import { useAppSelector } from "../../redux/hooks";
 import { Message, Student, Teacher, UserMessages } from "../../types";
 import converter from "../../utils/converter";
+import sortMessByTimeStamp from "../../utils/sortMessByTimeStamp";
 import styles from "./MessagesPage.module.css";
 export default function MessagesPage() {
+  //to fix : sending message then messages are sorted and you can see them teleport to the bottom
+  //to fix: when you click again at the same user, the messages are coming up with state before any changes
+
   const profile = useAppSelector((state) => state.profile).profile;
   const [messages, setMessages] = useState<UserMessages[]>([]);
   const [studentsOrTeachers, setStudentsOrTeachers] = useState<
     Student[] | Teacher[]
   >([]);
+
   useEffect(() => {
     const fetchStudents = async () => {
       const q = query(
@@ -60,7 +73,6 @@ export default function MessagesPage() {
       });
 
       setMessages((prevMessages) => [...prevMessages, ...newMessages]);
-      setChosenUser(messages[0]);
     };
     studentsOrTeachers.forEach((studentOrTeacher) => {
       fetchMessages(studentOrTeacher);
@@ -71,6 +83,49 @@ export default function MessagesPage() {
   const [chosenUser, setChosenUser] = useState<UserMessages>(messages[0]);
   const [search, setSearch] = useState<string>("");
   const [messageToSend, setMessageToSend] = useState<string>("");
+
+  const sendMessage = async (user: UserMessages) => {
+    const messageToAdd = {
+      isSeen: false,
+      sendBy: profile.uid,
+      text: messageToSend,
+      createdAt: serverTimestamp() as Timestamp,
+    };
+    await addDoc(
+      collection(
+        db,
+        "users",
+        profile.uid,
+        profile.type === "student" ? "teachers" : "students",
+        user.uid,
+        "messages"
+      ),
+      messageToAdd
+    );
+  };
+  const [chosenuserMessages, setChosenUserMessages] = useState<Message[]>([]);
+  useEffect(() => {
+    if (chosenUser) {
+      onSnapshot(
+        collection(
+          db,
+          "users",
+          profile.uid,
+          profile.type === "student" ? "teachers" : "students",
+          chosenUser.uid,
+          "messages"
+        ).withConverter(converter<Message>()),
+        (querySnapshot) => {
+          const userMessages: Message[] = [];
+          querySnapshot.forEach((doc) => {
+            userMessages.push(doc.data());
+          });
+          setChosenUserMessages(sortMessByTimeStamp(userMessages));
+        }
+      );
+    }
+  }, [chosenUser, profile.type, profile.uid]);
+
   return (
     <Layout>
       <div className={styles.pageSplitter}>
@@ -87,6 +142,7 @@ export default function MessagesPage() {
             .filter((mess) => mess.email.includes(search))
             .map((message, index) => (
               <MessageUserProfile
+                uid={message.uid}
                 customStyles={{ width: "100%" }}
                 key={index}
                 iconUrl={message.photoURL}
@@ -94,6 +150,7 @@ export default function MessagesPage() {
                 message={message.messages[0] ? message.messages[0].text : ""}
                 onClick={() => {
                   setChosenUser(message);
+                  setChosenUserMessages(message.messages);
                 }}
               />
             ))}
@@ -110,7 +167,7 @@ export default function MessagesPage() {
                 <div className={styles.userName}>{chosenUser.email}</div>
               </div>
               <div className={styles.messagesContainer}>
-                {chosenUser.messages.map((message, index) => (
+                {chosenuserMessages.map((message, index) => (
                   <div
                     key={index}
                     className={
@@ -130,6 +187,7 @@ export default function MessagesPage() {
                 placeholder="Type your message"
                 onChange={(e) => setMessageToSend(e.target.value)}
                 icon={<ArrowRight />}
+                onClick={() => sendMessage(chosenUser)}
               />
             </div>
           </div>
