@@ -6,6 +6,7 @@ import {
   serverTimestamp,
   Timestamp,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import ArrowRight from "../../components/Icons/ArrowRight";
@@ -16,14 +17,10 @@ import { db } from "../../firebaseConfig";
 import { useAppSelector } from "../../redux/hooks";
 import { Message, Student, Teacher, UserMessages } from "../../types";
 import converter from "../../utils/converter";
-import sortMessByTimeStamp from "../../utils/sortMessByTimeStamp";
 import styles from "./MessagesPage.module.css";
 export default function MessagesPage() {
-  //to fix : sending message then messages are sorted and you can see them teleport to the bottom
-  //to fix: when you click again at the same user, the messages are coming up with state before any changes
-
   const profile = useAppSelector((state) => state.profile).profile;
-  const [messages, setMessages] = useState<UserMessages[]>([]);
+  const [usersAndMessages, setUsersAndMessages] = useState<UserMessages[]>([]);
   const [studentsOrTeachers, setStudentsOrTeachers] = useState<
     Student[] | Teacher[]
   >([]);
@@ -50,7 +47,7 @@ export default function MessagesPage() {
 
   useEffect(() => {
     const fetchMessages = async (studentOrTeacher: Student | Teacher) => {
-      const newMessages: UserMessages[] = [];
+      const newUserAndMessages: UserMessages[] = [];
       const q = query(
         collection(
           db,
@@ -59,7 +56,8 @@ export default function MessagesPage() {
           profile.type === "student" ? "teachers" : "students",
           studentOrTeacher.uid,
           "messages"
-        )
+        ),
+        orderBy("createdAt")
       ).withConverter(converter<Message>());
       const querySnapshot = await getDocs(q);
       const userMessages: Message[] = [];
@@ -67,12 +65,14 @@ export default function MessagesPage() {
         userMessages.push(doc.data());
       });
 
-      newMessages.push({
+      newUserAndMessages.push({
         ...studentOrTeacher,
         messages: userMessages,
       });
-
-      setMessages((prevMessages) => [...prevMessages, ...newMessages]);
+      setUsersAndMessages((prevMessages) => [
+        ...prevMessages,
+        ...newUserAndMessages,
+      ]);
     };
     studentsOrTeachers.forEach((studentOrTeacher) => {
       fetchMessages(studentOrTeacher);
@@ -80,7 +80,9 @@ export default function MessagesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.type, profile.uid, studentsOrTeachers]);
 
-  const [chosenUser, setChosenUser] = useState<UserMessages>(messages[0]);
+  const [chosenUser, setChosenUser] = useState<UserMessages>(
+    usersAndMessages[0]
+  );
   const [search, setSearch] = useState<string>("");
   const [messageToSend, setMessageToSend] = useState<string>("");
 
@@ -102,27 +104,39 @@ export default function MessagesPage() {
       ),
       messageToAdd
     );
+    await addDoc(
+      collection(
+        db,
+        "users",
+        user.uid,
+        profile.type === "student" ? "students" : "teachers",
+        profile.uid,
+        "messages"
+      ),
+      messageToAdd
+    );
   };
+
   const [chosenuserMessages, setChosenUserMessages] = useState<Message[]>([]);
+
   useEffect(() => {
     if (chosenUser) {
-      onSnapshot(
-        collection(
-          db,
-          "users",
-          profile.uid,
-          profile.type === "student" ? "teachers" : "students",
-          chosenUser.uid,
-          "messages"
-        ).withConverter(converter<Message>()),
-        (querySnapshot) => {
-          const userMessages: Message[] = [];
-          querySnapshot.forEach((doc) => {
-            userMessages.push(doc.data());
-          });
-          setChosenUserMessages(sortMessByTimeStamp(userMessages));
-        }
-      );
+      const messagesColl = collection(
+        db,
+        "users",
+        profile.uid,
+        profile.type === "student" ? "teachers" : "students",
+        chosenUser.uid,
+        "messages"
+      ).withConverter(converter<Message>());
+      const messageQuery = query(messagesColl, orderBy("createdAt"));
+      onSnapshot(messageQuery, (querySnapshot) => {
+        const userMessages: Message[] = [];
+        querySnapshot.forEach((doc) => {
+          userMessages.push(doc.data());
+        });
+        setChosenUserMessages(userMessages);
+      });
     }
   }, [chosenUser, profile.type, profile.uid]);
 
@@ -138,7 +152,7 @@ export default function MessagesPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          {messages
+          {usersAndMessages
             .filter((mess) => mess.email.includes(search))
             .map((message, index) => (
               <MessageUserProfile
@@ -147,10 +161,13 @@ export default function MessagesPage() {
                 key={index}
                 iconUrl={message.photoURL}
                 name={message.email}
-                message={message.messages[0] ? message.messages[0].text : ""}
+                message={
+                  message.messages[message.messages.length - 1]
+                    ? message.messages[message.messages.length - 1].text
+                    : ""
+                }
                 onClick={() => {
                   setChosenUser(message);
-                  setChosenUserMessages(message.messages);
                 }}
               />
             ))}
