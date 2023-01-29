@@ -11,7 +11,7 @@ import CheckInRoom from "./CheckInRoom";
 import StudentsPage from "./StudentsPage";
 import LessonsPage from "./RoomsPage";
 import TeachersPage from "./pages/TeachersPage/TeachersPage";
-
+import MessagesPage from "./pages/MessagesPage/MessagesPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/teachers",
     element: <TeachersPage />,
+  },
+  {
+    path: "/messages",
+    element: <MessagesPage />,
   },
 ]);
 

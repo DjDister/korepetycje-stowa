@@ -11,6 +11,7 @@ export default function Input({
   error,
   label,
   warning,
+  onKeyDown,
 }: {
   icon?: JSX.Element;
   placeholder: string;
@@ -20,6 +21,7 @@ export default function Input({
   error?: string;
   warning?: string;
   label?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className={styles.container}>
@@ -29,6 +31,7 @@ export default function Input({
           onChange={(e) => onChange(e)}
           className={styles.input}
           placeholder={placeholder}
+          onKeyDown={onKeyDown}
         />
         <div onClick={onClick} className={styles.iconContainer}>
           {icon}

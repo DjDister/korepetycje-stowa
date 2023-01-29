@@ -23,7 +23,11 @@ export default function StudentCard({
       params: { studentId: studentId, belongsToUserId: belongsToUserId },
     },
     { icon: <Phone />, url: "/", params: null },
-    { icon: <Chat />, url: "/", params: null },
+    {
+      icon: <Chat />,
+      url: "/messages",
+      params: { navigatedFromUser: studentId },
+    },
   ];
   const navigate = useNavigate();
   return (
