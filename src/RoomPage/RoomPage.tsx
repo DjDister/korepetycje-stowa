@@ -19,6 +19,7 @@ import { db } from "../firebaseConfig";
 import { useAppSelector } from "../redux/hooks";
 import servers from "../webRTCConfig";
 import styles from "./RoomPage.module.css";
+import CanvasDraw from "react-canvas-draw";
 type Atendee = {
   checkInName: string;
   userId: string;
@@ -214,10 +215,22 @@ export default function RoomPage() {
   };
 
   const [hovering, setHovering] = useState(false);
-
+  const drawingRef = useRef<any>(null);
   return (
     <div className={styles.pageContainer}>
       <div className={styles.whiteboardContainer}>
+        <div
+          style={{
+            position: "absolute",
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "yellow",
+          }}
+        >
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <CanvasDraw style={{ width: "100%", height: "100%" }} />
+          </div>
+        </div>
         <div className={styles.roomDetailsContainer}>
           <div className={styles.leaveButton} onClick={hangUp}>
             <ArrowLeft />
