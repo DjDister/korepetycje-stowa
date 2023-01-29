@@ -40,7 +40,7 @@ export default function StudentCard({
         />
       </div>
       <div className={styles.nameContainer}>{student.email}</div>
-      <div>Student</div>
+      <div>{student.type === "teacher" ? "Teacher" : "Student"}</div>
       <div className={styles.iconsContainer}>
         {icons.map((icon, index) => (
           <div className={styles.iconContainer} key={index}>
