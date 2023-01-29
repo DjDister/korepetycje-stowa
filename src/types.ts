@@ -3,7 +3,12 @@ import { Timestamp } from "firebase/firestore";
 
 export type accType = "student" | "teacher";
 
-export type Student = { uid: string; email: string; photoURL: string };
+export type Student = {
+  uid: string;
+  email: string;
+  photoURL: string;
+  type?: accType;
+};
 export interface UserProfileData {
   emailVerified: boolean;
   type: accType;

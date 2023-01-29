@@ -1,8 +1,7 @@
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import PlusIcon from "../../components/Icons/PlusIcon";
 import Input from "../../components/Input/Input";
-import NavBar from "../../components/navBar/navBar";
+import Layout from "../../components/Layout/Layout";
 import StudentCard from "../../components/StudentCard/StudentCard";
 import { db } from "../../firebaseConfig";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
@@ -36,10 +35,7 @@ export default function TeachersPage() {
   const [filter, setFilter] = useState<string>("");
 
   return (
-    <div className="pageContainer">
-      <div className="navbarContainer">
-        <NavBar />
-      </div>
+    <Layout>
       <div className="flexCenter">
         {teachers.length > 0 ? (
           <div className="studentsListContainer">
@@ -47,7 +43,7 @@ export default function TeachersPage() {
               <div className="studentsSearchInputContainer">
                 <Input
                   label={"Search"}
-                  placeholder={"Search students"}
+                  placeholder={"Search teachers"}
                   onChange={(e) => setFilter(e.target.value)}
                 />
               </div>
@@ -61,6 +57,7 @@ export default function TeachersPage() {
                         uid: teacher.uid,
                         email: teacher.email,
                         photoURL: teacher.photoURL,
+                        type: "teacher",
                       }}
                       belongsToUserId={teacher.uid}
                       studentId={profile.uid}
@@ -71,6 +68,6 @@ export default function TeachersPage() {
           </div>
         ) : null}
       </div>
-    </div>
+    </Layout>
   );
 }
