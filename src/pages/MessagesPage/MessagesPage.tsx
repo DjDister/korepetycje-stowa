@@ -9,6 +9,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ArrowRight from "../../components/Icons/ArrowRight";
 import Input from "../../components/Input/Input";
 import Layout from "../../components/Layout/Layout";
@@ -19,6 +20,7 @@ import { Message, Student, Teacher, UserMessages } from "../../types";
 import converter from "../../utils/converter";
 import styles from "./MessagesPage.module.css";
 export default function MessagesPage() {
+  const { state } = useLocation();
   const profile = useAppSelector((state) => state.profile).profile;
   const [usersAndMessages, setUsersAndMessages] = useState<UserMessages[]>([]);
   const [studentsOrTeachers, setStudentsOrTeachers] = useState<
@@ -39,6 +41,12 @@ export default function MessagesPage() {
       const newStudentsOrTeachers: Student[] | Teacher[] = [];
       querySnapshot.forEach((doc) => {
         newStudentsOrTeachers.push(doc.data());
+        if (state && state.navigatedFromUser === doc.data().uid) {
+          setChosenUser({
+            ...doc.data(),
+            messages: [],
+          });
+        }
       });
       setStudentsOrTeachers(newStudentsOrTeachers);
     };
@@ -205,6 +213,12 @@ export default function MessagesPage() {
                 onChange={(e) => setMessageToSend(e.target.value)}
                 icon={<ArrowRight />}
                 onClick={() => sendMessage(chosenUser)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    sendMessage(chosenUser);
+                  }
+                }}
               />
             </div>
           </div>
