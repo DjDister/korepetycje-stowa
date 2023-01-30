@@ -7,6 +7,7 @@ import {
   query,
   serverTimestamp,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 import { useAppSelector } from "./redux/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -42,7 +43,8 @@ export default function LessonsPage() {
           "students",
           state.studentId,
           "lessons"
-        )
+        ),
+        orderBy("createdAt")
       );
 
       onSnapshot(q, (querySnapshot) => {
@@ -61,7 +63,7 @@ export default function LessonsPage() {
           fetchedRooms.push(room);
         });
 
-        setActiveRooms(fetchedRooms);
+        setActiveRooms(fetchedRooms.reverse());
       });
     }
   }, [state.belongsToUserId, state.studentId]);

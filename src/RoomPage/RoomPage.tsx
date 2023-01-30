@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -31,7 +32,7 @@ const pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
   //issue with joing a room second time - addtracks failed because the peerconnection was closed
-
+  //todo: as a student send yours whiteboard which you edited and load it on teacher's screen
   const [attendees, setAttendees] = useState<Atendee[]>([]);
   const [otherUser, setOtherUser] = useState<Atendee | undefined>(undefined);
   const state = useLocation();
@@ -39,6 +40,7 @@ export default function RoomPage() {
   const hostId = state.pathname.substring(6, 34);
   const roomId = state.pathname.substring(35, 55);
   const isAdmin = hostId === loginStatus.user?.uid;
+  const { profile } = useAppSelector((state) => state.profile);
 
   const roomDoc = doc(
     db,
@@ -215,7 +217,107 @@ export default function RoomPage() {
   };
 
   const [hovering, setHovering] = useState(false);
-  const drawingRef = useRef<any>(null);
+
+  const canvasRef = useRef<any>(null);
+  const canvasCollection = collection(roomDoc, "canvas");
+  const canvasDocReff = doc(collection(roomDoc, "canvas"), "123");
+  const canvasDocRef = doc(collection(roomDoc, "canvas"), "123");
+  const saveCanvas = async () => {
+    console.log(`saving canvas`);
+    const data = canvasRef.current.getSaveData();
+
+    setLines([...JSON.parse(data).lines]);
+    await setDoc(canvasDocReff, JSON.parse(data))
+      .then((docRef) => {
+        console.log("Document written with ");
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
+  };
+
+  useEffect(() => {
+    if (profile.type === "student") {
+      onSnapshot(canvasDocReff, (doc) => {
+        let newestDoc: any = doc.data();
+        // snapshot.docChanges().forEach((change) => {
+        //   if (change.type === "added") {
+        //     newestDoc = change.doc;
+        //   }
+        // });
+        if (newestDoc) {
+          console.log(`newest canvas data detected`);
+
+          const data = doc.data();
+
+          const currentData = canvasRef.current.getSaveData();
+
+          const currentCanvas = JSON.parse(currentData);
+          const newCanvas = JSON.parse(JSON.stringify(data));
+          currentCanvas.lines = currentCanvas.lines.concat(newCanvas.lines);
+          canvasRef.current.loadSaveData(JSON.stringify(currentCanvas), true);
+        }
+      });
+    }
+  }, []);
+  const [lines, setLines] = useState<any[]>([]);
+  console.log(lines);
+  // //const canvasRef = React.createRef<CanvasDraw>();
+
+  // useEffect(() => {
+  //   // Listen to changes in the lines data in the database
+  //   // and update the state with the latest lines
+  //   onSnapshot(canvasDocRef, (snapshot) => {
+  //     setLines(snapshot.data()?.lines);
+  //   });
+  // }, []);
+
+  // // Handle new line added
+  // const handleLineAdded = (newLine: any) => {
+  //   setLines((prevLines) => {
+  //     // Update the state with the new line
+  //     const updatedLines = [...prevLines, newLine];
+
+  //     // Save the updated lines to the database
+  //     setDoc(canvasDocRef, { lines: updatedLines });
+
+  //     return updatedLines;
+  //   });
+  // };
+
+  // const [lines, setLines] = useState([]);
+
+  // useEffect(() => {
+  //   if (profile.type === "student") {
+  //     onSnapshot(canvasDocRef, (doc) => {
+  //       const data = doc.data();
+  //       console.log(`detected canvas data change in db`);
+  //       console.log(data);
+  //       canvasRef.current.loadSaveData(JSON.stringify(data));
+  //     });
+  //   }
+  // }, []);
+
+  // const handleDraw = async (saveData: any) => {
+  //   console.log(`saving canvas`);
+  //   console.log(saveData);
+  //   const doc = await getDoc(canvasDocRef);
+  //   if (!doc.exists) {
+  //     console.log(`doesnt exist`);
+  //   } else {
+  //     console.log(`exists`);
+  //     try {
+  //       const data = canvasRef.current.getSaveData();
+  //       await setDoc(canvasDocRef, JSON.parse(data));
+  //       await updateDoc(canvasDocRef, {
+  //         lines: saveData.lines,
+  //       });
+  //     } catch (error) {
+  //       console.error("Error saving canvas: ", error);
+  //     }
+  //   }
+  // };
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.whiteboardContainer}>
@@ -228,7 +330,36 @@ export default function RoomPage() {
           }}
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-            <CanvasDraw style={{ width: "100%", height: "100%" }} />
+            {/* <CanvasDraw
+              brushRadius={2}
+              lazyRadius={0}
+              canvasWidth={400}
+              canvasHeight={400}
+              //saveData={lines ? JSON.stringify(lines) : undefined}
+              onChange={handleDraw}
+              style={{ width: "100%", height: "100%" }}
+            /> */}
+            {/* <CanvasDraw
+              ref={canvasRef}
+              lazyRadius={0}
+              brushRadius={2}
+              brushColor="#444"
+              hideGrid={true}
+              saveData={JSON.stringify(lines)}
+              onChange={handleLineAdded}
+              style={{ width: "100%", height: "100%" }}
+            /> */}
+            <CanvasDraw
+              onChange={
+                profile.type === "student"
+                  ? undefined
+                  : (e) => {
+                      saveCanvas();
+                    }
+              }
+              ref={(canvasDraw) => (canvasRef.current = canvasDraw)}
+              style={{ width: "100%", height: "100%" }}
+            />
           </div>
         </div>
         <div className={styles.roomDetailsContainer}>
