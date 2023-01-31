@@ -7,7 +7,11 @@ import { logOut } from "../../redux/loginSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import Door from "../Icons/Door";
 
-const navElemMiddle = ["Our Teachers", "Search by subjects", "About us"];
+const navElemMiddle = [
+  { label: "Our Teachers", url: "/ourteachers" },
+  { label: "Search by subjects", url: "/" },
+  { label: "About us", url: "/" },
+];
 
 const loggedList = [
   { label: "Students", url: "/students" },
@@ -40,7 +44,9 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
         <div className={styles.middleContainer}>
           {navElemMiddle.map((element, index) => (
             <div key={index} className={styles.middleLinkContainer}>
-              <div className={styles.flexCenter}>{element}</div>
+              <Link style={{ textDecoration: "none" }} to={element.url}>
+                <div className={styles.flexCenter}>{element.label}</div>
+              </Link>
             </div>
           ))}
           {loginStatus.isLoggedIn &&
