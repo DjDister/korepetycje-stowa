@@ -13,9 +13,7 @@ export interface UserProfileData {
   emailVerified: boolean;
   type: accType;
   isAnonymous: boolean;
-
   providerData: UserInfo[];
-
   refreshToken: string;
   uid: string;
   students: Student[];
