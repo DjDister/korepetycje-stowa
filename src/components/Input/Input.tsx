@@ -12,6 +12,7 @@ export default function Input({
   label,
   warning,
   onKeyDown,
+  customContainerStyle,
 }: {
   icon?: JSX.Element;
   placeholder: string;
@@ -21,10 +22,11 @@ export default function Input({
   error?: string;
   warning?: string;
   label?: string;
+  customContainerStyle?: React.CSSProperties;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={customContainerStyle}>
       {label ? <div className={styles.labelContainer}>{label}</div> : null}
       <div className={styles.inputContainer} style={style}>
         <input
