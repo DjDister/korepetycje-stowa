@@ -13,13 +13,15 @@ export interface UserProfileData {
   emailVerified: boolean;
   type: accType;
   isAnonymous: boolean;
-
+  displayName: string;
   providerData: UserInfo[];
-
+  phoneNumber?: string;
   refreshToken: string;
   uid: string;
   students: Student[];
   email: string;
+  createdAt: Timestamp;
+  subjects: string[] | undefined;
 }
 
 export type Room = {

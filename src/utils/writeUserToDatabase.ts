@@ -1,5 +1,11 @@
 import { User } from "firebase/auth";
-import { doc, Firestore, setDoc } from "firebase/firestore";
+import {
+  doc,
+  Firestore,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { UserProfileData } from "../types";
 import converter from "./converter";
 const photoDefault =
@@ -28,6 +34,9 @@ const writeUserToDatabase = async (
     type: accType,
     students: [],
     email: user.email || "",
+    displayName: user.displayName || user.email || "",
+    createdAt: serverTimestamp() as Timestamp,
+    subjects: [],
   };
   await setDoc(docRef, userData);
 };
