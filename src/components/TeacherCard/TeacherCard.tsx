@@ -20,21 +20,25 @@ export default function TeacherCard({
       />
       <div className={styles.statsContainer}>
         <div className={styles.flexCenter}>
-          <Star style={{ height: "100%" }} stroke="#FFAD0D" />
+          <Star style={{ height: "20px" }} stroke="#FFAD0D" />
           4.5
         </div>
         <div className={styles.flexCenter}>
-          <Eye height="24" />
+          <Eye height="20" stroke="red" />
           244
         </div>
         <div className={styles.flexCenter}>
-          <Person height="24" />
+          <Person height="20" stroke="green" />
           12
         </div>
       </div>
       <div className={styles.nameContainer}>{teacher.email}</div>
-      <div className={styles.subjectTagsContainer}>
-        <div className={styles.subjectTag}>#Math</div>
+      <div className={styles.detailsContainer}>
+        <div className={styles.subjectTagsContainer}>
+          <div className={styles.subjectTag}>#Math</div>
+          <div className={styles.subjectTag}>#Math</div>
+        </div>
+        <div className={styles.priceContainer}>52$/h</div>
       </div>
     </div>
   );

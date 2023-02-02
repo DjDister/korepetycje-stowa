@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./navbar.module.css";
-import "../../App.css";
 import { useAppSelector } from "../../redux/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { logOut } from "../../redux/loginSlice";
