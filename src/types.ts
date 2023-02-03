@@ -13,11 +13,15 @@ export interface UserProfileData {
   emailVerified: boolean;
   type: accType;
   isAnonymous: boolean;
+  displayName: string;
   providerData: UserInfo[];
+  phoneNumber?: string;
   refreshToken: string;
   uid: string;
   students: Student[];
   email: string;
+  createdAt: Timestamp;
+  subjects: string[] | undefined;
 }
 
 export type Room = {
@@ -30,6 +34,7 @@ export type Teacher = {
   uid: string;
   email: string;
   photoURL: string;
+  rating?: number;
 };
 
 export interface UserMessages extends Teacher, Student {
@@ -42,3 +47,8 @@ export interface Message {
   sendBy: string;
   createdAt: Timestamp;
 }
+
+export type Rating = {
+  givenBy: string;
+  rating: number;
+};
