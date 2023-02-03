@@ -127,8 +127,9 @@
 .iconsContainer{
     display: flex;
     flex: auto;
-    padding-top: 80px;
-    padding-left: 80px;
+    width: 50vh;
+    height:50vh;
+    align-self: center;
 }
 
 .chooseTagsContainer{
