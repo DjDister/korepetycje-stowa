@@ -8,7 +8,12 @@ import Door from "../Icons/Door";
 
 const navElemMiddle = [
   { label: "Search by subjects", url: "/" },
-  { label: "About us", url: "/" },
+  {
+    label: "Contact",
+    onClick: () => {
+      window.location.href = "mailto:porebskifilip@wp.pl";
+    },
+  },
 ];
 
 const loggedList = [
@@ -42,9 +47,15 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
         <div className={styles.middleContainer}>
           {navElemMiddle.map((element, index) => (
             <div key={index} className={styles.middleLinkContainer}>
-              <Link style={{ textDecoration: "none" }} to={element.url}>
-                <div className={styles.flexCenter}>{element.label}</div>
-              </Link>
+              {element.onClick ? (
+                <div onClick={element.onClick} className={styles.flexCenter}>
+                  {element.label}
+                </div>
+              ) : (
+                <Link style={{ textDecoration: "none" }} to={element.url}>
+                  <div className={styles.flexCenter}>{element.label}</div>
+                </Link>
+              )}
             </div>
           ))}
           {loginStatus.isLoggedIn &&
@@ -94,7 +105,14 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
           </div>
         ) : (
           <div className={styles.buttonsContainer}>
-            <div className={styles.contactButton}>Contact</div>
+            <div
+              onClick={() => {
+                window.location.href = "mailto:porebskifilip@wp.pl";
+              }}
+              className={styles.contactButton}
+            >
+              Contact
+            </div>
             <div
               className={styles.signInButton}
               onClick={() => navigate("/login")}
