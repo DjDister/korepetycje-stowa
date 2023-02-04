@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import PlusIcon from "./components/Icons/PlusIcon";
 import Input from "./components/Input/Input";
 import Layout from "./components/Layout/Layout";
-import NavBar from "./components/navBar/navBar";
 import StudentCard from "./components/StudentCard/StudentCard";
 import { db } from "./firebaseConfig";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
@@ -67,6 +66,9 @@ export default function StudentsPage() {
             placeholder={"Add student"}
             onChange={(e) => setSearchEmail(e.target.value)}
             onClick={onAddStudent}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onAddStudent();
+            }}
           />
         </div>
         {students.length > 0 ? (

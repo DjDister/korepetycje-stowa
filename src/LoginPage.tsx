@@ -7,17 +7,17 @@ import {
 } from "firebase/auth";
 import { db, firebaseApp } from "./firebaseConfig";
 import "./loginPage.css";
-
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
-import { logIn } from "./redux/loginSlice";
 import { useNavigate } from "react-router-dom";
 import errorFeedback from "./utils/errorMessages";
-import GoogleIcon from "./components/navBar/icons/GoogleIcon";
-import MailIcon from "./components/navBar/icons/MailIcon";
-import LockIcon from "./components/navBar/icons/LockIcon";
 import writeUserToDatabase from "./utils/writeUserToDatabase";
 import { setUserProfile, setUserProfileFirstTime } from "./redux/profileSlice";
 import searchForUserWithEmail from "./utils/searchForUserWithEmail";
+import GoogleIcon from "./components/Icons/GoogleIcon";
+import LockIcon from "./components/Icons/LockIcon";
+import MailIcon from "./components/Icons/MailIcon";
+import { loginFailure, loginSuccess, startLogin } from "./redux/loginSlice";
+
 const photoDefault =
   "https://cdn.midjourney.com/2cd09984-a602-4b3d-bc3b-e565bfba82b1/grid_0.png";
 export default function LoginPage() {
@@ -52,7 +52,14 @@ export default function LoginPage() {
               },
             ],
           };
-          dispatch(logIn(user));
+          const userInfo = {
+            email: user.email ?? "",
+            displayName: user.displayName ?? "",
+            uid: user.uid,
+          };
+
+          dispatch(loginSuccess(userInfo));
+
           dispatch(setUserProfileFirstTime({ user: user, type: accType }));
           writeUserToDatabase(db, user, accType);
         })
@@ -66,16 +73,26 @@ export default function LoginPage() {
   };
 
   const login = () => {
+    dispatch(startLogin());
+
     signInWithEmailAndPassword(auth, formData.login, formData.password)
       .then(async (userCredential) => {
         const user = userCredential.user;
-        dispatch(logIn(user)); //some issue with type of user  - redux non serializable value error
+        const userInfo = {
+          email: user.email ?? "",
+          displayName: user.displayName ?? "",
+          uid: user.uid,
+        };
+
+        dispatch(loginSuccess(userInfo));
+
         const userData = await searchForUserWithEmail(user.email ?? "");
         if (userData) dispatch(setUserProfile(userData));
         navigate("/");
       })
       .catch((error) => {
         setFormData({ ...formData, error: error.code });
+        dispatch(loginFailure(error));
         console.log(error);
       });
   };
