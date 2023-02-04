@@ -26,7 +26,7 @@ type Atendee = {
   accepted: string;
 };
 
-const pc = new RTCPeerConnection(servers);
+let pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
   //issue with joing a room second time - addtracks failed because the peerconnection was closed
@@ -76,89 +76,102 @@ export default function RoomPage() {
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
   const setupSources = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false,
-    });
-    const remoteStream = new MediaStream();
-    localStream.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream);
-    });
-    setLocalStream(localStream);
-    pc.ontrack = (event) => {
-      event.streams[0].getTracks().forEach((track) => {
-        remoteStream.addTrack(track);
-      });
-    };
-    if (localRef.current && remoteRef.current) {
-      localRef.current.srcObject = localStream;
-      remoteRef.current.srcObject = remoteStream;
+    if (pc.signalingState === "closed") {
+      pc.close();
+      pc = new RTCPeerConnection();
     }
-    setWebcamActive(true);
-
-    if (isAdmin) {
-      pc.onicecandidate = (event) => {
-        event.candidate &&
-          setDoc(doc(offerCandidates), event.candidate.toJSON());
-      };
-
-      const offerDescription = await pc.createOffer();
-      await pc.setLocalDescription(offerDescription);
-
-      const offer = {
-        sdp: offerDescription.sdp,
-        type: offerDescription.type,
-      };
-
-      await setDoc(callDoc, offer);
-
-      onSnapshot(callDoc, (snapshot) => {
-        const data = snapshot.data();
-        if (!pc.currentRemoteDescription && data?.answer) {
-          const answerDescription = new RTCSessionDescription(data.answer);
-          pc.setRemoteDescription(answerDescription);
-        }
+    try {
+      const localStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
       });
 
-      onSnapshot(answerCandidates, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            let data = change.doc.data();
-            pc.addIceCandidate(new RTCIceCandidate(data));
+      const remoteStream = new MediaStream();
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream);
+      });
+      setLocalStream(localStream);
+      pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+          remoteStream.addTrack(track);
+        });
+      };
+      if (localRef.current && remoteRef.current) {
+        localRef.current.srcObject = localStream;
+        remoteRef.current.srcObject = remoteStream;
+      }
+      setWebcamActive(true);
+
+      if (isAdmin) {
+        pc.onicecandidate = (event) => {
+          event.candidate &&
+            setDoc(doc(offerCandidates), event.candidate.toJSON());
+        };
+
+        const offerDescription = await pc.createOffer();
+        await pc.setLocalDescription(offerDescription);
+
+        const offer = {
+          sdp: offerDescription.sdp,
+          type: offerDescription.type,
+        };
+
+        await setDoc(callDoc, offer);
+
+        onSnapshot(callDoc, (snapshot) => {
+          const data = snapshot.data();
+          if (!pc.currentRemoteDescription && data?.answer) {
+            const answerDescription = new RTCSessionDescription(data.answer);
+            pc.setRemoteDescription(answerDescription);
           }
         });
-      });
-    } else {
-      pc.onicecandidate = (event) => {
-        event.candidate &&
-          setDoc(doc(answerCandidates), event.candidate.toJSON());
-      };
 
-      const callData = (await getDoc(callDoc)).data();
-      const offerDescription = callData as RTCSessionDescription;
-
-      await pc.setRemoteDescription(
-        new RTCSessionDescription(offerDescription)
-      );
-
-      const answerDescription = await pc.createAnswer();
-      await pc.setLocalDescription(answerDescription);
-
-      const answer = {
-        type: answerDescription.type,
-        sdp: answerDescription.sdp,
-      };
-
-      await updateDoc(callDoc, { answer });
-
-      onSnapshot(offerCandidates, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            let data = change.doc.data();
-            pc.addIceCandidate(new RTCIceCandidate(data));
-          }
+        onSnapshot(answerCandidates, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              let data = change.doc.data();
+              pc.addIceCandidate(new RTCIceCandidate(data));
+            }
+          });
         });
-      });
+      } else {
+        pc.onicecandidate = (event) => {
+          event.candidate &&
+            setDoc(doc(answerCandidates), event.candidate.toJSON());
+        };
+
+        const callData = (await getDoc(callDoc)).data();
+        const offerDescription = callData as RTCSessionDescription;
+
+        await pc.setRemoteDescription(
+          new RTCSessionDescription(offerDescription)
+        );
+
+        const answerDescription = await pc.createAnswer();
+        await pc.setLocalDescription(answerDescription);
+
+        const answer = {
+          type: answerDescription.type,
+          sdp: answerDescription.sdp,
+        };
+
+        await updateDoc(callDoc, { answer });
+
+        onSnapshot(offerCandidates, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+              let data = change.doc.data();
+              pc.addIceCandidate(new RTCIceCandidate(data));
+            }
+          });
+        });
+      }
+    } catch (e: any) {
+      if (e.name === "NotFoundError") {
+        alert("Requested device not found.");
+      } else {
+        console.error("Error occurred while accessing user media devices", e);
+      }
     }
   };
   const navigate = useNavigate();
