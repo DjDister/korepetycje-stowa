@@ -4,7 +4,7 @@ import TeacherCard from "./components/TeacherCard/TeacherCard";
 import { Teacher } from "./types";
 import getTeachers from "./utils/getTeachers";
 import styles from "./App.module.css";
-const subjects = ["Math", "English", "Science", "History"];
+import { subjects } from "./consts/subjects";
 function App() {
   const [isOpenDropDownMenu, setIsOpenDropDownMenu] = useState(false);
   const [chosenSubjectFilter, setChosenSubjectFilter] = useState<string | null>(
@@ -16,14 +16,21 @@ function App() {
       const teachers = chosenSubjectFilter
         ? await getTeachers(chosenSubjectFilter)
         : await getTeachers();
+
       setTeachers(teachers);
     };
     fetchData();
-  }, []);
+  }, [chosenSubjectFilter]);
 
   return (
     <Layout>
       <div className={styles.pageContainer}>
+        {isOpenDropDownMenu ? (
+          <div
+            onClick={() => setIsOpenDropDownMenu(false)}
+            className={styles.closingContainer}
+          />
+        ) : null}
         <div className={styles.ourTeachersLabel}>
           <div className={styles.teachersTitle}>Check out our Teachers</div>
           <div
@@ -53,9 +60,17 @@ function App() {
           </div>
         </div>
         <div className={styles.ourTeachersContainer}>
-          {teachers.map((teacher, index) => (
-            <TeacherCard key={index} teacher={teacher} />
-          ))}
+          {teachers
+            .filter(
+              (teacher) =>
+                !(
+                  chosenSubjectFilter &&
+                  !teacher.subjects?.includes(chosenSubjectFilter)
+                )
+            )
+            .map((teacher, index) => (
+              <TeacherCard key={index} teacher={teacher} />
+            ))}
         </div>
       </div>
     </Layout>

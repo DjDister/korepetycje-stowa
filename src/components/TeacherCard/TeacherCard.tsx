@@ -8,7 +8,7 @@ export default function TeacherCard({
   teacher,
   customStyle,
 }: {
-  teacher: Teacher;
+  teacher: Teacher & { subjects?: string[]; amountOfStudents?: number };
   customStyle?: React.CSSProperties;
 }) {
   return (
@@ -21,7 +21,7 @@ export default function TeacherCard({
       <div className={styles.statsContainer}>
         <div className={styles.flexCenter}>
           <Star style={{ height: "20px" }} stroke="#FFAD0D" />
-          4.5
+          {teacher.rating || 0}
         </div>
         <div className={styles.flexCenter}>
           <Eye height="20" stroke="red" />
@@ -29,14 +29,17 @@ export default function TeacherCard({
         </div>
         <div className={styles.flexCenter}>
           <Person height="20" stroke="green" />
-          12
+          {teacher.amountOfStudents}
         </div>
       </div>
       <div className={styles.nameContainer}>{teacher.email}</div>
       <div className={styles.detailsContainer}>
         <div className={styles.subjectTagsContainer}>
-          <div className={styles.subjectTag}>#Math</div>
-          <div className={styles.subjectTag}>#Math</div>
+          {teacher.subjects?.slice(0, 4).map((subject, index) => (
+            <div key={index} className={styles.subjectTag}>
+              #{subject}
+            </div>
+          ))}
         </div>
         <div className={styles.priceContainer}>52$/h</div>
       </div>

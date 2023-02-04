@@ -40,10 +40,6 @@ const router = createBrowserRouter([
     element: <MessagesPage />,
   },
   {
-    path: "/ourteachers",
-    element: <OurTeachersPage />,
-  },
-  {
     path: "/profile",
     element: <ProfilePage />,
   },

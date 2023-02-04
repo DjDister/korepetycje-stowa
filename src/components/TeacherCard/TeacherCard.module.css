@@ -1,5 +1,6 @@
 .cardContainer{
     min-height: 320px;
+    max-height: 320px;
     width: 200px;
     background-color: aliceblue;
     padding: 10px;
@@ -68,5 +69,5 @@
     align-items: center;
     color: #44AC21;
     font-weight: 600;
-
+    margin-left: 2px;
 }

@@ -18,16 +18,8 @@ import Phone from "../../components/Icons/Phone";
 import PencilStudy from "../../components/Icons/PencilStudy";
 import PersonStudy from "../../components/Icons/PersonStudy";
 import { useNavigate } from "react-router-dom";
+import { subjects } from "../../consts/subjects";
 
-const subjects = [
-  "Math",
-  "English",
-  "Biology",
-  "Chemistry",
-  "Physics",
-  "History",
-  "Geography",
-];
 export default function ProfilePage() {
   const loginStatus = useAppSelector((state) => state.loginStatus);
   const { profile } = useAppSelector((state) => state.profile);

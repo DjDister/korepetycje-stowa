@@ -22,6 +22,7 @@ export interface UserProfileData {
   email: string;
   createdAt: Timestamp;
   subjects: string[] | undefined;
+  ratings?: Rating[];
 }
 
 export type Room = {
@@ -35,6 +36,8 @@ export type Teacher = {
   email: string;
   photoURL: string;
   rating?: number;
+  amountOfStudents?: number;
+  subjects?: string[];
 };
 
 export interface UserMessages extends Teacher, Student {

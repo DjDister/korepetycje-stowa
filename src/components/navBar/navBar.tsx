@@ -7,7 +7,6 @@ import { useAppDispatch } from "../../redux/hooks";
 import Door from "../Icons/Door";
 
 const navElemMiddle = [
-  { label: "Our Teachers", url: "/ourteachers" },
   { label: "Search by subjects", url: "/" },
   { label: "About us", url: "/" },
 ];
