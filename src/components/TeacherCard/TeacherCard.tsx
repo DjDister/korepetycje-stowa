@@ -32,7 +32,9 @@ export default function TeacherCard({
           {teacher.amountOfStudents}
         </div>
       </div>
-      <div className={styles.nameContainer}>{teacher.email}</div>
+      <div className={styles.nameContainer}>
+        {teacher.displayName || teacher.email}
+      </div>
       <div className={styles.detailsContainer}>
         <div className={styles.subjectTagsContainer}>
           {teacher.subjects?.slice(0, 4).map((subject, index) => (

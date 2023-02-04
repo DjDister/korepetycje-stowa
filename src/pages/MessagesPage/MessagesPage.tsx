@@ -18,6 +18,7 @@ import { db } from "../../firebaseConfig";
 import { useAppSelector } from "../../redux/hooks";
 import { Message, Student, Teacher, UserMessages } from "../../types";
 import converter from "../../utils/converter";
+import getUserDisplayNameWithUid from "../../utils/getUserDisplayNameWithUid";
 import styles from "./MessagesPage.module.css";
 export default function MessagesPage() {
   const { state } = useLocation();
@@ -48,6 +49,7 @@ export default function MessagesPage() {
           });
         }
       });
+
       setStudentsOrTeachers(newStudentsOrTeachers);
     };
     fetchStudents();
@@ -82,6 +84,7 @@ export default function MessagesPage() {
         ...newUserAndMessages,
       ]);
     };
+
     studentsOrTeachers.forEach((studentOrTeacher) => {
       fetchMessages(studentOrTeacher);
     });

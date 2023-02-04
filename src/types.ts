@@ -38,6 +38,7 @@ export type Teacher = {
   rating?: number;
   amountOfStudents?: number;
   subjects?: string[];
+  displayName?: string;
 };
 
 export interface UserMessages extends Teacher, Student {

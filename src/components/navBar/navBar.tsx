@@ -85,7 +85,9 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
               }}
               onClick={() => navigate("/profile")}
             >
-              <div style={{ fontWeight: 500 }}>{profile.email}</div>
+              <div style={{ fontWeight: 500 }}>
+                {profile.displayName || profile.email}
+              </div>
               <img
                 className={styles.userIcon}
                 alt={"UserIcon"}

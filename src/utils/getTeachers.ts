@@ -26,6 +26,7 @@ const getTeachers = async (filter?: string | null) => {
       photoURL: doc.data().providerData[0].photoURL || "",
       rating: calculateRating(doc.data().ratings),
       subjects: doc.data().subjects,
+      displayName: doc.data().displayName,
     };
     teachers.push(teacher);
   });

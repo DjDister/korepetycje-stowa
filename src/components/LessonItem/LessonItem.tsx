@@ -46,7 +46,7 @@ export default function LessonItem({
     );
 
     const atendee = {
-      checkInName: profile.email,
+      checkInName: profile.displayName || profile.email,
       userId: profile.uid,
       rank: belongsToUserId === profile.uid ? "admin" : "user",
       accepted: "true",
