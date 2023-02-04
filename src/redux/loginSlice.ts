@@ -1,37 +1,52 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "firebase/auth";
-import { UserProfileData } from "../types";
+import { createSlice } from "@reduxjs/toolkit";
 
+interface UserInfo {
+  email: string;
+  displayName: string;
+  uid: string;
+}
 interface LoginSlice {
   isLoggedIn: boolean;
-  user?: User;
+  user: UserInfo | null;
+  error: string | null;
+  loading: boolean;
 }
 
 const initialState: LoginSlice = {
   isLoggedIn: false,
-  user: undefined,
+
+  loading: false,
+  user: null,
+  error: null,
 };
 
 export const loginSlice = createSlice({
-  name: "loginStatus",
+  name: "login",
   initialState,
   reducers: {
-    logIn: (state, action: PayloadAction<User>) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.isLoggedIn = true;
+    startLogin: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    loginSuccess: (state, action) => {
+      state.loading = false;
       state.user = action.payload;
+      state.error = null;
+      state.isLoggedIn = true;
+    },
+    loginFailure: (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.error = action.payload;
     },
     logOut: (state) => {
+      state.user = null;
       state.isLoggedIn = false;
-      state.user = undefined;
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { logIn, logOut } = loginSlice.actions;
+export const { startLogin, loginSuccess, loginFailure, logOut } =
+  loginSlice.actions;
 
 export default loginSlice.reducer;

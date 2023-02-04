@@ -6,23 +6,22 @@ import StudentCard from "../../components/StudentCard/StudentCard";
 import { db } from "../../firebaseConfig";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { updateStudents } from "../../redux/profileSlice";
-import { Student } from "../../types";
+import { Teacher } from "../../types";
 import converter from "../../utils/converter";
 
 export default function TeachersPage() {
   const profile = useAppSelector((state) => state.profile).profile;
-
-  const [teachers, setTeachers] = useState(profile.students);
+  const [teachers, setTeachers] = useState<Teacher[]>(profile.students);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const q = query(
       collection(db, "users", profile.uid, "teachers").withConverter(
-        converter<Student>()
+        converter<Teacher>()
       )
     );
     onSnapshot(q, (querySnapshot) => {
-      const newTeachers: Student[] = [];
+      const newTeachers: Teacher[] = [];
       querySnapshot.forEach((doc) => {
         const studentToAdd = doc.data();
         newTeachers.push(studentToAdd);
@@ -31,9 +30,7 @@ export default function TeachersPage() {
       dispatch(updateStudents(newTeachers));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const [filter, setFilter] = useState<string>("");
-
   return (
     <Layout>
       <div className="flexCenter">
@@ -47,6 +44,7 @@ export default function TeachersPage() {
                   onChange={(e) => setFilter(e.target.value)}
                 />
               </div>
+
               <div className="studentsContainer">
                 {teachers
                   .filter((teachers) => teachers.email.includes(filter))
@@ -59,6 +57,7 @@ export default function TeachersPage() {
                         photoURL: teacher.photoURL,
                         type: "teacher",
                       }}
+                      rating={teacher.rating}
                       belongsToUserId={teacher.uid}
                       studentId={profile.uid}
                     />
@@ -66,7 +65,11 @@ export default function TeachersPage() {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="emptyTeachersContainer">
+            No teachers found, ask your teacher to add you
+          </div>
+        )}
       </div>
     </Layout>
   );

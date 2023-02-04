@@ -1,13 +1,20 @@
 import React from "react";
 import styles from "./navbar.module.css";
-import "../../App.css";
 import { useAppSelector } from "../../redux/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { logOut } from "../../redux/loginSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import Door from "../Icons/Door";
 
-const navElemMiddle = ["Our Teachers", "Search by subjects", "About us"];
+const navElemMiddle = [
+  { label: "Search by subjects", url: "/" },
+  {
+    label: "Contact",
+    onClick: () => {
+      window.location.href = "mailto:porebskifilip@wp.pl";
+    },
+  },
+];
 
 const loggedList = [
   { label: "Students", url: "/students" },
@@ -40,7 +47,15 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
         <div className={styles.middleContainer}>
           {navElemMiddle.map((element, index) => (
             <div key={index} className={styles.middleLinkContainer}>
-              <div className={styles.flexCenter}>{element}</div>
+              {element.onClick ? (
+                <div onClick={element.onClick} className={styles.flexCenter}>
+                  {element.label}
+                </div>
+              ) : (
+                <Link style={{ textDecoration: "none" }} to={element.url}>
+                  <div className={styles.flexCenter}>{element.label}</div>
+                </Link>
+              )}
             </div>
           ))}
           {loginStatus.isLoggedIn &&
@@ -90,7 +105,14 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
           </div>
         ) : (
           <div className={styles.buttonsContainer}>
-            <div className={styles.contactButton}>Contact</div>
+            <div
+              onClick={() => {
+                window.location.href = "mailto:porebskifilip@wp.pl";
+              }}
+              className={styles.contactButton}
+            >
+              Contact
+            </div>
             <div
               className={styles.signInButton}
               onClick={() => navigate("/login")}
