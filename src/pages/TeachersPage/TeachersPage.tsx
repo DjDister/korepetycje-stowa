@@ -31,7 +31,6 @@ export default function TeachersPage() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [filter, setFilter] = useState<string>("");
-
   return (
     <Layout>
       <div className="flexCenter">
@@ -45,6 +44,7 @@ export default function TeachersPage() {
                   onChange={(e) => setFilter(e.target.value)}
                 />
               </div>
+
               <div className="studentsContainer">
                 {teachers
                   .filter((teachers) => teachers.email.includes(filter))
@@ -65,7 +65,11 @@ export default function TeachersPage() {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="emptyTeachersContainer">
+            No teachers found, ask your teacher to add you
+          </div>
+        )}
       </div>
     </Layout>
   );

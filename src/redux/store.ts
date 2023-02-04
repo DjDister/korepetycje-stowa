@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { query, collection, onSnapshot } from "firebase/firestore";
-import { db } from "../firebaseConfig";
 import loginSlice from "./loginSlice";
 import profileSlice from "./profileSlice";
 
@@ -41,6 +39,26 @@ const store = configureStore({
     profile: profileSlice,
   },
   preloadedState: stateLoader.loadState(),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["proffile/setUserProfile"],
+        ignoredActionPaths: [
+          "payload.createdAt",
+          "payload.user.proactiveRefresh",
+          "payload.user.auth",
+          "payload.user.stsTokenManager",
+          "payload.user.metadata",
+        ],
+        ignoredPaths: [
+          "profile.profile.createdAt",
+          "profile.profile.proactiveRefresh",
+          "profile.profile.auth",
+          "profile.profile.stsTokenManager",
+          "profile.profile.metadata",
+        ],
+      },
+    }),
 });
 
 store.subscribe(() => {
@@ -49,7 +67,5 @@ store.subscribe(() => {
 
 export default store;
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

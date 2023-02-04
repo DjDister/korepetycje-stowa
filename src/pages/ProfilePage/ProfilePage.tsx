@@ -49,7 +49,7 @@ export default function ProfilePage() {
     });
   };
   const updatePhone = async () => {
-    if (/^[0-9]{1,9}$/.test(newPhoneNumber)) {
+    if (/^\d{9}$/.test(newPhoneNumber)) {
       setIsShowingPhoneInput(!isShowingPhoneInput);
       dispatch(updatePhoneNumber(newPhoneNumber));
       await updateDoc(userRef, {

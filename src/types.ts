@@ -10,12 +10,12 @@ export type Student = {
   type?: accType;
 };
 export interface UserProfileData {
-  emailVerified: boolean;
+  emailVerified?: boolean;
   type: accType;
   isAnonymous: boolean;
   displayName: string;
   providerData: UserInfo[];
-  phoneNumber?: string;
+  phoneNumber?: string | null;
   refreshToken: string;
   uid: string;
   students: Student[];
