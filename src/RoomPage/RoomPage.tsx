@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -20,7 +19,7 @@ import { db } from "../firebaseConfig";
 import { useAppSelector } from "../redux/hooks";
 import servers from "../webRTCConfig";
 import styles from "./RoomPage.module.css";
-import CanvasDraw from "react-canvas-draw";
+import Whiteboard3 from "./Whiteboard3";
 type Atendee = {
   checkInName: string;
   userId: string;
@@ -232,104 +231,26 @@ export default function RoomPage() {
   const [hovering, setHovering] = useState(false);
 
   const canvasRef = useRef<any>(null);
-  const canvasCollection = collection(roomDoc, "canvas");
+  const [initialData, setInitialData] = useState<any>(null);
   const canvasDocReff = doc(collection(roomDoc, "canvas"), "123");
-  const canvasDocRef = doc(collection(roomDoc, "canvas"), "123");
-  const saveCanvas = async () => {
-    console.log(`saving canvas`);
-    const data = canvasRef.current.getSaveData();
-
-    setLines([...JSON.parse(data).lines]);
-    await setDoc(canvasDocReff, JSON.parse(data))
-      .then((docRef) => {
-        console.log("Document written with ");
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
-  };
-
+  const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    if (profile.type === "student") {
-      onSnapshot(canvasDocReff, (doc) => {
-        let newestDoc: any = doc.data();
-        // snapshot.docChanges().forEach((change) => {
-        //   if (change.type === "added") {
-        //     newestDoc = change.doc;
-        //   }
-        // });
-        if (newestDoc) {
-          console.log(`newest canvas data detected`);
+    const getInitialData = async () => {
+      const docSnap = await getDoc(canvasDocReff);
+      if (docSnap.exists()) {
+        setInitialData(docSnap.data());
+      } else {
+        await setDoc(canvasDocReff, { canvas: "[]" });
+        setInitialData({ canvas: "[]", createdBy: "teacher" });
+      }
+    };
 
-          const data = doc.data();
-
-          const currentData = canvasRef.current.getSaveData();
-
-          const currentCanvas = JSON.parse(currentData);
-          const newCanvas = JSON.parse(JSON.stringify(data));
-          currentCanvas.lines = currentCanvas.lines.concat(newCanvas.lines);
-          canvasRef.current.loadSaveData(JSON.stringify(currentCanvas), true);
-        }
-      });
+    if (!isMounted) {
+      getInitialData();
+    } else {
+      setIsMounted(true);
     }
   }, []);
-  const [lines, setLines] = useState<any[]>([]);
-  console.log(lines);
-  // //const canvasRef = React.createRef<CanvasDraw>();
-
-  // useEffect(() => {
-  //   // Listen to changes in the lines data in the database
-  //   // and update the state with the latest lines
-  //   onSnapshot(canvasDocRef, (snapshot) => {
-  //     setLines(snapshot.data()?.lines);
-  //   });
-  // }, []);
-
-  // // Handle new line added
-  // const handleLineAdded = (newLine: any) => {
-  //   setLines((prevLines) => {
-  //     // Update the state with the new line
-  //     const updatedLines = [...prevLines, newLine];
-
-  //     // Save the updated lines to the database
-  //     setDoc(canvasDocRef, { lines: updatedLines });
-
-  //     return updatedLines;
-  //   });
-  // };
-
-  // const [lines, setLines] = useState([]);
-
-  // useEffect(() => {
-  //   if (profile.type === "student") {
-  //     onSnapshot(canvasDocRef, (doc) => {
-  //       const data = doc.data();
-  //       console.log(`detected canvas data change in db`);
-  //       console.log(data);
-  //       canvasRef.current.loadSaveData(JSON.stringify(data));
-  //     });
-  //   }
-  // }, []);
-
-  // const handleDraw = async (saveData: any) => {
-  //   console.log(`saving canvas`);
-  //   console.log(saveData);
-  //   const doc = await getDoc(canvasDocRef);
-  //   if (!doc.exists) {
-  //     console.log(`doesnt exist`);
-  //   } else {
-  //     console.log(`exists`);
-  //     try {
-  //       const data = canvasRef.current.getSaveData();
-  //       await setDoc(canvasDocRef, JSON.parse(data));
-  //       await updateDoc(canvasDocRef, {
-  //         lines: saveData.lines,
-  //       });
-  //     } catch (error) {
-  //       console.error("Error saving canvas: ", error);
-  //     }
-  //   }
-  // };
 
   return (
     <div className={styles.pageContainer}>
@@ -343,36 +264,11 @@ export default function RoomPage() {
           }}
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-            {/* <CanvasDraw
-              brushRadius={2}
-              lazyRadius={0}
-              canvasWidth={400}
-              canvasHeight={400}
-              //saveData={lines ? JSON.stringify(lines) : undefined}
-              onChange={handleDraw}
-              style={{ width: "100%", height: "100%" }}
-            /> */}
-            {/* <CanvasDraw
-              ref={canvasRef}
-              lazyRadius={0}
-              brushRadius={2}
-              brushColor="#444"
-              hideGrid={true}
-              saveData={JSON.stringify(lines)}
-              onChange={handleLineAdded}
-              style={{ width: "100%", height: "100%" }}
-            /> */}
-            <CanvasDraw
-              onChange={
-                profile.type === "student"
-                  ? undefined
-                  : (e) => {
-                      saveCanvas();
-                    }
-              }
-              ref={(canvasDraw) => (canvasRef.current = canvasDraw)}
-              style={{ width: "100%", height: "100%" }}
-            />
+            {initialData ? (
+              <Whiteboard3 roomDoc={roomDoc} initialData={initialData} />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className={styles.roomDetailsContainer}>
@@ -446,4 +342,27 @@ export default function RoomPage() {
       </div>
     </div>
   );
+}
+export function areObjectsEqual(object1: any, object2: any) {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+    if (
+      (areObjects && !areObjectsEqual(val1, val2)) ||
+      (!areObjects && val1 !== val2)
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isObject(object: any) {
+  return object != null && typeof object === "object";
 }
