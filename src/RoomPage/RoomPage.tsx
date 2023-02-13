@@ -251,13 +251,9 @@ export default function RoomPage() {
       if (dataChannelActive) {
         if (dataChannelActive.readyState === "open") {
           dataChannelActive.send(JSON.stringify(messageData));
-          console.log(`send data`);
         }
       }
     }
-    // else {
-    //   console.error("Cannot send message in current signaling state", pc);
-    // }
   };
 
   const [hovering, setHovering] = useState(false);

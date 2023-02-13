@@ -14,7 +14,7 @@ export default function Layout({
   navbarCustomStyles?: React.CSSProperties;
 }) {
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+    <div style={{ width: "100%", height: "100vh", position: "relative" }}>
       {isBackgroundDecorationVisible && <CustomBackgroundLayout />}
       {isNavbarVisible && (
         <div style={{ height: "10%" }}>
