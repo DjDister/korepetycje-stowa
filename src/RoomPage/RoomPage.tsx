@@ -4,19 +4,16 @@ import {
   AppState,
   BinaryFiles,
   ExcalidrawImperativeAPI,
-  PointerDownState,
 } from "@excalidraw/excalidraw/types/types";
 import {
   collection,
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   query,
   setDoc,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,7 +26,6 @@ import { db } from "../firebaseConfig";
 import { useAppSelector } from "../redux/hooks";
 import servers from "../webRTCConfig";
 import styles from "./RoomPage.module.css";
-import Whiteboard3 from "./Whiteboard3";
 type Atendee = {
   checkInName: string;
   userId: string;
@@ -41,7 +37,7 @@ let pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
   //issue with joing a room second time - addtracks failed because the peerconnection was closed
-  //todo: as a student send yours whiteboard which you edited and load it on teacher's screen
+
   const [attendees, setAttendees] = useState<Atendee[]>([]);
   const [otherUser, setOtherUser] = useState<Atendee | undefined>(undefined);
   const state = useLocation();
@@ -89,11 +85,7 @@ export default function RoomPage() {
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
   const [comingFromListen, setComingFromListen] = useState(false);
-  const [turnOffWriting, setTurnOffWriting] = useState(false);
   const [showWhiteboard, setShowWhiteboard] = useState(false);
-  const [comingFromListen2, setComingFromListen2] = useState(false);
-  const [shouldRunOnChange, setShouldRunOnChange] = useState(true);
-  let should = true;
   const setupSources = async () => {
     if (pc.signalingState === "closed") {
       pc.close();
@@ -122,12 +114,6 @@ export default function RoomPage() {
       setWebcamActive(true);
 
       const dataChannel = pc.createDataChannel("messages");
-      // dataChannel.onopen = () => {
-      //   console.log("Data channel open");
-      // };
-      // dataChannel.onmessage = (event) => {
-      //   console.log("Received message:", event.data);
-      // };
 
       pc.ondatachannel = (event) => {
         const receiveDataChannel = event.channel;
@@ -261,16 +247,18 @@ export default function RoomPage() {
     }
     if (pc.signalingState === "stable") {
       if (dataChannelActive) {
-        dataChannelActive.send(JSON.stringify(messageData));
+        console.log(dataChannelActive.readyState);
+        if (dataChannelActive.readyState === "open")
+          dataChannelActive.send(JSON.stringify(messageData));
       }
-    } else {
-      console.error("Cannot send message in current signaling state", pc);
     }
+    // else {
+    //   console.error("Cannot send message in current signaling state", pc);
+    // }
   };
 
   const [hovering, setHovering] = useState(false);
 
-  const canvasRef = useRef<any>(null);
   const canvasDocReff = doc(collection(roomDoc, "canvas"), "123");
 
   const [message, setMessage] = useState<string | null>(null);
@@ -314,6 +302,7 @@ export default function RoomPage() {
     } else {
       setIsMounted(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
