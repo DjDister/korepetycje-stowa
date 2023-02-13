@@ -1,3 +1,11 @@
+import { Excalidraw } from "@excalidraw/excalidraw";
+import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
+import {
+  AppState,
+  BinaryFiles,
+  ExcalidrawImperativeAPI,
+  PointerDownState,
+} from "@excalidraw/excalidraw/types/types";
 import {
   collection,
   deleteDoc,
@@ -13,8 +21,10 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowLeft from "../components/Icons/ArrowLeft";
+import ArrowRight from "../components/Icons/ArrowRight";
 import Door from "../components/Icons/Door";
 import VideoCamera from "../components/Icons/VideoCamera";
+import Input from "../components/Input/Input";
 import { db } from "../firebaseConfig";
 import { useAppSelector } from "../redux/hooks";
 import servers from "../webRTCConfig";
@@ -72,11 +82,18 @@ export default function RoomPage() {
   useEffect(() => {
     setOtherUser(attendees.find((a) => a.userId !== loginStatus.user?.uid));
   }, [attendees, loginStatus.user?.uid]);
-
+  const [dataChannelActive, setDataChannelActive] =
+    useState<RTCDataChannel | null>(null);
   const [webcamActive, setWebcamActive] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const localRef = useRef<HTMLVideoElement>(null);
   const remoteRef = useRef<HTMLVideoElement>(null);
+  const [comingFromListen, setComingFromListen] = useState(false);
+  const [turnOffWriting, setTurnOffWriting] = useState(false);
+  const [showWhiteboard, setShowWhiteboard] = useState(false);
+  const [comingFromListen2, setComingFromListen2] = useState(false);
+  const [shouldRunOnChange, setShouldRunOnChange] = useState(true);
+  let should = true;
   const setupSources = async () => {
     if (pc.signalingState === "closed") {
       pc.close();
@@ -104,6 +121,33 @@ export default function RoomPage() {
       }
       setWebcamActive(true);
 
+      const dataChannel = pc.createDataChannel("messages");
+      // dataChannel.onopen = () => {
+      //   console.log("Data channel open");
+      // };
+      // dataChannel.onmessage = (event) => {
+      //   console.log("Received message:", event.data);
+      // };
+
+      pc.ondatachannel = (event) => {
+        const receiveDataChannel = event.channel;
+        receiveDataChannel.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+
+          if (excalidrawRef.current) {
+            if (message.sendBy !== profile.uid) {
+              setComingFromListen(true);
+              excalidrawRef.current.updateScene({
+                elements: JSON.parse(message.message),
+              });
+            }
+          }
+        };
+      };
+      setDataChannelActive(dataChannel);
+      if (dataChannel) {
+        setShowWhiteboard(true);
+      }
       if (isAdmin) {
         pc.onicecandidate = (event) => {
           event.candidate &&
@@ -184,6 +228,13 @@ export default function RoomPage() {
     setWebcamActive(false);
     await deleteDoc(callDoc);
     await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
+
+    if (excalidrawRef.current) {
+      const elements = excalidrawRef.current.getSceneElements();
+      const data = JSON.stringify(elements);
+
+      await setDoc(canvasDocReff, { canvas: data });
+    }
     navigate(`/lessons`, {
       state: {
         studentId: state.state.studentId,
@@ -199,49 +250,62 @@ export default function RoomPage() {
     }
   };
 
-  const acceptUser = async (atendee: Atendee) => {
-    const q = query(attendeesDbRef, where("userId", "==", atendee.userId));
-    const querySnapshot = await getDocs(q);
-
-    const fetchAtendees: Atendee[] = [];
-    querySnapshot.forEach(async (doc) => {
-      const atendee = doc.data() as Atendee;
-      fetchAtendees.push(atendee);
-      await setDoc(doc.ref, { ...atendee, accepted: "true" });
-    }, []);
-    setAttendees((prev) => [
-      ...prev.filter((attendee) => attendee.userId !== atendee.userId),
-      { ...fetchAtendees[0], accepted: "true" },
-    ]);
-  };
-
-  const removeUser = async (atendee: Atendee) => {
-    if (isAdmin) {
-      const q = query(attendeesDbRef, where("userId", "==", atendee.userId));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      }, []);
-      setAttendees(
-        attendees.filter((attendee) => attendee.userId !== atendee.userId)
-      );
+  const sendMessage = (message: string) => {
+    const messageData = {
+      message,
+      sendBy: profile.uid,
+    };
+    if (comingFromListen) {
+      setComingFromListen(false);
+      return;
+    }
+    if (pc.signalingState === "stable") {
+      if (dataChannelActive) {
+        dataChannelActive.send(JSON.stringify(messageData));
+      }
+    } else {
+      console.error("Cannot send message in current signaling state", pc);
     }
   };
 
   const [hovering, setHovering] = useState(false);
 
   const canvasRef = useRef<any>(null);
-  const [initialData, setInitialData] = useState<any>(null);
   const canvasDocReff = doc(collection(roomDoc, "canvas"), "123");
+
+  const [message, setMessage] = useState<string | null>(null);
+  const [currentElements, setCurrentElements] = useState<ExcalidrawElement[]>(
+    []
+  );
+
+  const handleChange = async (
+    elements: readonly ExcalidrawElement[],
+    appState: AppState,
+    files: BinaryFiles
+  ) => {
+    // if something goes wrong remove this if statement with  cursorButton === "up"
+    if (appState.cursorButton === "up") {
+      if (areObjectsEqual(elements, currentElements)) {
+        return;
+      }
+    }
+
+    setCurrentElements(elements as ExcalidrawElement[]);
+    if (elements.length === 0) return;
+
+    if (dataChannelActive) {
+      sendMessage(JSON.stringify(elements));
+    }
+  };
+  const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
+
+  const [initialData, setInitialData] = useState<any>(null);
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     const getInitialData = async () => {
       const docSnap = await getDoc(canvasDocReff);
       if (docSnap.exists()) {
         setInitialData(docSnap.data());
-      } else {
-        await setDoc(canvasDocReff, { canvas: "[]" });
-        setInitialData({ canvas: "[]", createdBy: "teacher" });
       }
     };
 
@@ -261,15 +325,35 @@ export default function RoomPage() {
             width: "100vw",
             height: "100vh",
             backgroundColor: "yellow",
-            zIndex: -1,
+            zIndex: 0,
           }}
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-            {initialData ? (
-              <Whiteboard3 roomDoc={roomDoc} initialData={initialData} />
-            ) : (
-              <></>
-            )}
+            <Input
+              style={{
+                zIndex: 1222,
+                position: "absolute",
+                top: 200,
+                right: 0,
+                width: "40%",
+              }}
+              placeholder="mess"
+              onChange={(e) => setMessage(e.target.value)}
+              icon={<ArrowRight />}
+              onClick={() => {
+                if (message) {
+                  sendMessage(message);
+                }
+              }}
+            />
+            {showWhiteboard ? (
+              <Excalidraw
+                ref={excalidrawRef}
+                initialData={{ elements: JSON.parse(initialData.canvas) }}
+                onChange={handleChange}
+                isCollaborating={true}
+              />
+            ) : null}
           </div>
         </div>
         <div className={styles.roomDetailsContainer}>
