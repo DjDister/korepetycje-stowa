@@ -122,7 +122,8 @@ export default function RoomPage() {
 
           if (excalidrawRef.current) {
             if (message.sendBy !== profile.uid) {
-              console.log(`recieve data`);
+              // console.log(`recieve data`);
+              // console.log(message.message);
               setComingFromListen(true);
               excalidrawRef.current.updateScene({
                 elements: JSON.parse(message.message),
@@ -273,12 +274,15 @@ export default function RoomPage() {
     appState: AppState,
     files: BinaryFiles
   ) => {
-    // if something goes wrong remove this if statement with  cursorButton === "up"
-
-    if (areObjectsEqual(elements, currentElements)) {
-      return;
+    if (appState.cursorButton === "up") {
+      if (areObjectsEqual(elements, currentElements)) {
+        return;
+      }
+    } else {
+      if (appState.activeTool.type === "hand") {
+        return;
+      }
     }
-
     setCurrentElements(elements as ExcalidrawElement[]);
     if (elements.length === 0) return;
 
