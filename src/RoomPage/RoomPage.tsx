@@ -122,6 +122,7 @@ export default function RoomPage() {
 
           if (excalidrawRef.current) {
             if (message.sendBy !== profile.uid) {
+              console.log(`recieve data`);
               setComingFromListen(true);
               excalidrawRef.current.updateScene({
                 elements: JSON.parse(message.message),
@@ -247,9 +248,10 @@ export default function RoomPage() {
     }
     if (pc.signalingState === "stable") {
       if (dataChannelActive) {
-        console.log(dataChannelActive.readyState);
-        if (dataChannelActive.readyState === "open")
+        if (dataChannelActive.readyState === "open") {
           dataChannelActive.send(JSON.stringify(messageData));
+          console.log(`send data`);
+        }
       }
     }
     // else {
@@ -272,10 +274,9 @@ export default function RoomPage() {
     files: BinaryFiles
   ) => {
     // if something goes wrong remove this if statement with  cursorButton === "up"
-    if (appState.cursorButton === "up") {
-      if (areObjectsEqual(elements, currentElements)) {
-        return;
-      }
+
+    if (areObjectsEqual(elements, currentElements)) {
+      return;
     }
 
     setCurrentElements(elements as ExcalidrawElement[]);
