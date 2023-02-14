@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     path: "/students",
     element: (
       <LoginStatusChecker>
-        <StudentsPage />,
+        <StudentsPage />
       </LoginStatusChecker>
     ),
   },
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
     path: "/teachers",
     element: (
       <LoginStatusChecker>
-        <TeachersPage />,
+        <TeachersPage />
       </LoginStatusChecker>
     ),
   },
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
     path: "/messages",
     element: (
       <LoginStatusChecker>
-        <MessagesPage />,
+        <MessagesPage />
       </LoginStatusChecker>
     ),
   },
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
     path: "/profile",
     element: (
       <LoginStatusChecker>
-        <ProfilePage />,
+        <ProfilePage />
       </LoginStatusChecker>
     ),
   },

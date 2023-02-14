@@ -8,7 +8,7 @@ import {
   onSnapshot,
   orderBy,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ArrowRight from "../../components/Icons/ArrowRight";
 import Input from "../../components/Input/Input";
@@ -164,6 +164,12 @@ export default function MessagesPage() {
       });
     }
   }, [chosenUser, profile.type, profile.uid]);
+
+  const messRef = useRef<HTMLDivElement>(null);
+  if (messRef.current) {
+    messRef.current.scrollTop = messRef.current.scrollHeight;
+  }
+
   return (
     <Layout>
       <div className={styles.pageSplitter}>
@@ -211,7 +217,7 @@ export default function MessagesPage() {
                 />
                 <div className={styles.userName}>{chosenUser.email}</div>
               </div>
-              <div className={styles.messagesContainer}>
+              <div ref={messRef} className={styles.messagesContainer}>
                 {chosenuserMessages.map((message, index) => (
                   <div
                     key={index}
@@ -234,11 +240,13 @@ export default function MessagesPage() {
                 onChange={(e) => setMessageToSend(e.target.value)}
                 icon={<ArrowRight />}
                 onClick={() => {
+                  if (messageToSend === "") return;
                   sendMessage(chosenUser);
                   setMessageToSend("");
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
+                    if (messageToSend === "") return;
                     e.preventDefault();
                     sendMessage(chosenUser);
                     setMessageToSend("");
