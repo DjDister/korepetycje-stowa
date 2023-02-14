@@ -35,6 +35,9 @@ type Atendee = {
 let pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
+  useEffect(() => {
+    pc.close();
+  }, []);
   const [attendees, setAttendees] = useState<Atendee[]>([]);
   const [otherUser, setOtherUser] = useState<Atendee | undefined>(undefined);
   const state = useLocation();
