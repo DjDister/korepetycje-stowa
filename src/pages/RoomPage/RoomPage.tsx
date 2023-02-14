@@ -81,8 +81,14 @@ export default function RoomPage() {
   const [comingFromListen, setComingFromListen] = useState(false);
   const [showWhiteboard, setShowWhiteboard] = useState(false);
   const setupSources = async () => {
+    console.log(pc.signalingState);
+
     if (pc.signalingState === "closed") {
       pc.close();
+      pc = new RTCPeerConnection();
+    }
+    console.log(pc.signalingState);
+    if (!pc) {
       pc = new RTCPeerConnection();
     }
     try {
@@ -90,6 +96,7 @@ export default function RoomPage() {
         video: true,
         audio: false,
       });
+      console.log(pc.signalingState);
 
       const remoteStream = new MediaStream();
       localStream.getTracks().forEach((track) => {
@@ -209,7 +216,10 @@ export default function RoomPage() {
     pc.close();
     if (localRef.current) localRef.current.srcObject = null;
     localStream?.getTracks().forEach((track) => track.stop());
+    setLocalStream(null);
     setWebcamActive(false);
+    setDataChannelActive(null);
+    if (remoteRef.current) remoteRef.current.srcObject = null;
     const qColl = query(answerCandidates);
     const qSnap = await getDocs(qColl);
     qSnap.forEach(async (doc) => {
@@ -220,25 +230,12 @@ export default function RoomPage() {
     qSnap2.forEach(async (doc) => {
       await deleteDoc(doc.ref);
     });
-    await deleteDoc(callDoc)
-      .then(() => {
-        console.log("call doc deleted");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId))
-      .then(() => {
-        console.log("attendee doc deleted");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    await deleteDoc(callDoc);
+    await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
 
     if (excalidrawRef.current) {
       const elements = excalidrawRef.current.getSceneElements();
       const data = JSON.stringify(elements);
-
       await setDoc(canvasDocReff, { canvas: data });
     }
     navigate(`/lessons`, {
