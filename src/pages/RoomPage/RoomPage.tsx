@@ -17,12 +17,12 @@ import {
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import ArrowLeft from "../components/Icons/ArrowLeft";
-import Door from "../components/Icons/Door";
-import VideoCamera from "../components/Icons/VideoCamera";
-import { db } from "../firebaseConfig";
-import { useAppSelector } from "../redux/hooks";
-import servers from "../webRTCConfig";
+import ArrowLeft from "../../components/Icons/ArrowLeft";
+import Door from "../../components/Icons/Door";
+import VideoCamera from "../../components/Icons/VideoCamera";
+import { db } from "../../firebaseConfig";
+import { useAppSelector } from "../../redux/hooks";
+import servers from "../../webRTCConfig";
 import styles from "./RoomPage.module.css";
 type Atendee = {
   checkInName: string;
@@ -34,17 +34,12 @@ type Atendee = {
 let pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
-  //issue with joing a room second time - addtracks failed because the peerconnection was closed
-
   const [attendees, setAttendees] = useState<Atendee[]>([]);
   const [otherUser, setOtherUser] = useState<Atendee | undefined>(undefined);
   const state = useLocation();
   const loginStatus = useAppSelector((state) => state.loginStatus);
-  const hostId = state.pathname.substring(6, 34);
   const roomId = state.pathname.substring(35, 55);
-  const isAdmin = hostId === loginStatus.user?.uid;
   const { profile } = useAppSelector((state) => state.profile);
-
   const roomDoc = doc(
     db,
     "users",
@@ -134,22 +129,21 @@ export default function RoomPage() {
       if (dataChannel) {
         setShowWhiteboard(true);
       }
-      if (isAdmin) {
+
+      const callData = (await getDoc(callDoc)).data();
+      if (!callData) {
         pc.onicecandidate = (event) => {
           event.candidate &&
             setDoc(doc(offerCandidates), event.candidate.toJSON());
         };
-
         const offerDescription = await pc.createOffer();
         await pc.setLocalDescription(offerDescription);
-
         const offer = {
           sdp: offerDescription.sdp,
           type: offerDescription.type,
         };
 
         await setDoc(callDoc, offer);
-
         onSnapshot(callDoc, (snapshot) => {
           const data = snapshot.data();
           if (!pc.currentRemoteDescription && data?.answer) {
@@ -157,7 +151,6 @@ export default function RoomPage() {
             pc.setRemoteDescription(answerDescription);
           }
         });
-
         onSnapshot(answerCandidates, (snapshot) => {
           snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
@@ -171,7 +164,6 @@ export default function RoomPage() {
           event.candidate &&
             setDoc(doc(answerCandidates), event.candidate.toJSON());
         };
-
         const callData = (await getDoc(callDoc)).data();
         const offerDescription = callData as RTCSessionDescription;
 

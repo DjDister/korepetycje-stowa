@@ -1,17 +1,17 @@
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import PlusIcon from "./components/Icons/PlusIcon";
-import Input from "./components/Input/Input";
-import Layout from "./components/Layout/Layout";
-import StudentCard from "./components/StudentCard/StudentCard";
-import { db } from "./firebaseConfig";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
-import { updateStudents } from "./redux/profileSlice";
+import PlusIcon from "../../components/Icons/PlusIcon";
+import Input from "../../components/Input/Input";
+import Layout from "../../components/Layout/Layout";
+import StudentCard from "../../components/StudentCard/StudentCard";
+import { db } from "../../firebaseConfig";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { updateStudents } from "../../redux/profileSlice";
 import "./StudentsPage.css";
-import { Student } from "./types";
-import addUserToUsersStudents from "./utils/addUserToUsersStudents";
-import converter from "./utils/converter";
-import searchForUserWithEmail from "./utils/searchForUserWithEmail";
+import { Student } from "../../types";
+import addUserToUsersStudents from "../../utils/addUserToUsersStudents";
+import converter from "../../utils/converter";
+import searchForUserWithEmail from "../../utils/searchForUserWithEmail";
 export default function StudentsPage() {
   const profile = useAppSelector((state) => state.profile).profile;
 

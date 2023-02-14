@@ -5,11 +5,10 @@ import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import LoginPage from "./LoginPage";
-import RoomPage from "./RoomPage/RoomPage";
-import CheckInRoom from "./CheckInRoom";
-import StudentsPage from "./StudentsPage";
-import LessonsPage from "./RoomsPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RoomPage from "./pages/RoomPage/RoomPage";
+import StudentsPage from "./pages/StudentsPage/StudentsPage";
+import LessonsPage from "./pages/RoomsPage/RoomsPage";
 import TeachersPage from "./pages/TeachersPage/TeachersPage";
 import MessagesPage from "./pages/MessagesPage/MessagesPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
@@ -30,14 +29,6 @@ const router = createBrowserRouter([
     element: (
       <LoginStatusChecker>
         <LessonsPage />
-      </LoginStatusChecker>
-    ),
-  },
-  {
-    path: "room/:userId/:roomId/checkin",
-    element: (
-      <LoginStatusChecker>
-        <CheckInRoom />
       </LoginStatusChecker>
     ),
   },

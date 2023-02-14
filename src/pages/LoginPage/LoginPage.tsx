@@ -1,23 +1,25 @@
-import { useState, useEffect } from "react";
 import {
-  createUserWithEmailAndPassword,
   getAuth,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   User,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
-import { db, firebaseApp } from "./firebaseConfig";
-import "./loginPage.css";
-import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import errorFeedback from "./utils/errorMessages";
-import writeUserToDatabase from "./utils/writeUserToDatabase";
-import { setUserProfile, setUserProfileFirstTime } from "./redux/profileSlice";
-import searchForUserWithEmail from "./utils/searchForUserWithEmail";
-import GoogleIcon from "./components/Icons/GoogleIcon";
-import LockIcon from "./components/Icons/LockIcon";
-import MailIcon from "./components/Icons/MailIcon";
-import { loginFailure, loginSuccess, startLogin } from "./redux/loginSlice";
-
+import GoogleIcon from "../../components/Icons/GoogleIcon";
+import LockIcon from "../../components/Icons/LockIcon";
+import MailIcon from "../../components/Icons/MailIcon";
+import { firebaseApp, db } from "../../firebaseConfig";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { loginSuccess, startLogin, loginFailure } from "../../redux/loginSlice";
+import {
+  setUserProfileFirstTime,
+  setUserProfile,
+} from "../../redux/profileSlice";
+import errorFeedback from "../../utils/errorMessages";
+import searchForUserWithEmail from "../../utils/searchForUserWithEmail";
+import writeUserToDatabase from "../../utils/writeUserToDatabase";
+import "./loginPage.css";
 const photoDefault =
   "https://cdn.midjourney.com/2cd09984-a602-4b3d-bc3b-e565bfba82b1/grid_0.png";
 export default function LoginPage() {
@@ -236,7 +238,7 @@ export default function LoginPage() {
       </div>
       <div className="rightSide">
         <div className="insideRight">
-          <img alt="loginImage" src={require("./Panda.png")} />
+          <img alt="loginImage" src={require("../../Panda.png")} />
         </div>
       </div>
     </div>
