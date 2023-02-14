@@ -49,8 +49,22 @@ export default function MessagesPage() {
           });
         }
       });
+      const getUserDisplayName = async (
+        studentOrTeacher: Student | Teacher
+      ) => {
+        const displayName = await getUserDisplayNameWithUid(
+          studentOrTeacher.uid
+        );
 
-      setStudentsOrTeachers(newStudentsOrTeachers);
+        setStudentsOrTeachers((prevStudentsOrTeachers) => [
+          ...prevStudentsOrTeachers,
+          { ...studentOrTeacher, displayName },
+        ]);
+      };
+
+      newStudentsOrTeachers.forEach(async (studentOrTeacher) => {
+        getUserDisplayName(studentOrTeacher);
+      });
     };
     fetchStudents();
   }, [profile.type, profile.uid]);
@@ -150,7 +164,6 @@ export default function MessagesPage() {
       });
     }
   }, [chosenUser, profile.type, profile.uid]);
-
   return (
     <Layout>
       <div className={styles.pageSplitter}>
@@ -164,6 +177,9 @@ export default function MessagesPage() {
             />
           </div>
           {usersAndMessages
+            .filter((mess, index, arr) => {
+              return index === arr.findIndex((o) => o.uid === mess.uid);
+            })
             .filter((mess) => mess.email.includes(search))
             .map((message, index) => (
               <MessageUserProfile
@@ -171,7 +187,7 @@ export default function MessagesPage() {
                 customStyles={{ width: "100%" }}
                 key={index}
                 iconUrl={message.photoURL}
-                name={message.email}
+                name={message.displayName || message.email}
                 message={
                   message.messages[message.messages.length - 1]
                     ? message.messages[message.messages.length - 1].text

@@ -6,8 +6,7 @@ import { logOut } from "../../redux/loginSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import Door from "../Icons/Door";
 
-const navElemMiddle = [
-  { label: "Search by subjects", url: "/" },
+const navElemMiddle: { label: string; onClick: () => void; url?: string }[] = [
   {
     label: "Contact",
     onClick: () => {
@@ -52,7 +51,7 @@ function NavBar({ customStyles }: { customStyles?: React.CSSProperties }) {
                   {element.label}
                 </div>
               ) : (
-                <Link style={{ textDecoration: "none" }} to={element.url}>
+                <Link style={{ textDecoration: "none" }} to={element.url || ""}>
                   <div className={styles.flexCenter}>{element.label}</div>
                 </Link>
               )}
