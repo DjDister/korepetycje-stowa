@@ -10,6 +10,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   setDoc,
@@ -209,8 +210,30 @@ export default function RoomPage() {
     if (localRef.current) localRef.current.srcObject = null;
     localStream?.getTracks().forEach((track) => track.stop());
     setWebcamActive(false);
-    await deleteDoc(callDoc);
-    await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
+    const qColl = query(answerCandidates);
+    const qSnap = await getDocs(qColl);
+    qSnap.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+    const qColl2 = query(offerCandidates);
+    const qSnap2 = await getDocs(qColl2);
+    qSnap2.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+    await deleteDoc(callDoc)
+      .then(() => {
+        console.log("call doc deleted");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId))
+      .then(() => {
+        console.log("attendee doc deleted");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
     if (excalidrawRef.current) {
       const elements = excalidrawRef.current.getSceneElements();
