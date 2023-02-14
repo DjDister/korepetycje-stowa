@@ -1,6 +1,12 @@
-import React from "react";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db } from "../../firebaseConfig";
+import { useAppSelector } from "../../redux/hooks";
 import { Teacher } from "../../types";
+import addToProfilesForMessages from "../../utils/addToProfilesForMessages";
 import Eye from "../Icons/Eye";
+import MessageIcon from "../Icons/MessageIcon";
 import Person from "../Icons/Person";
 import Star from "../Icons/Star";
 import styles from "./TeacherCard.module.css";
@@ -11,13 +17,65 @@ export default function TeacherCard({
   teacher: Teacher & { subjects?: string[]; amountOfStudents?: number };
   customStyle?: React.CSSProperties;
 }) {
+  const [showMessageButton, setShowMessageButton] = useState(false);
+  const navigate = useNavigate();
+  const addTeacherToMessages = async () => {
+    if (!loginStatus.isLoggedIn) {
+      alert("You need to be logged in to send messages");
+      return;
+    }
+
+    const docRef = doc(
+      db,
+      "users",
+      profile.uid,
+      profile.type === "student" ? "teachers" : "students",
+      teacher.uid
+    );
+    const document = await getDoc(docRef);
+    console.log(document.exists());
+    if (!document.exists()) {
+      await addToProfilesForMessages(
+        profile,
+        teacher.email,
+        teacher.uid,
+        teacher.photoURL,
+        true
+      );
+    }
+    navigate("/messages", { state: { navigatedFromUser: teacher.uid } });
+  };
+
+  const { profile } = useAppSelector((state) => state.profile);
+  const loginStatus = useAppSelector((state) => state.loginStatus);
   return (
     <div className={styles.cardContainer} style={customStyle}>
-      <img
-        className={styles.cardImage}
-        src={teacher.photoURL}
-        alt="profilePic"
-      />
+      <div
+        onMouseLeave={() => setShowMessageButton(false)}
+        onMouseEnter={() => setShowMessageButton(true)}
+        style={{ position: "relative" }}
+      >
+        <img
+          className={styles.cardImage}
+          src={teacher.photoURL}
+          alt="profilePic"
+        />
+        <div
+          style={
+            showMessageButton && profile.type === "student"
+              ? {}
+              : { display: "none" }
+          }
+          className={showMessageButton ? styles.hoverElement : ""}
+        >
+          <div
+            onClick={() => addTeacherToMessages()}
+            style={{ cursor: "pointer" }}
+          >
+            <MessageIcon size={"42"} />
+          </div>
+        </div>
+      </div>
       <div className={styles.statsContainer}>
         <div className={styles.flexCenter}>
           <Star style={{ height: "20px" }} stroke="#FFAD0D" />

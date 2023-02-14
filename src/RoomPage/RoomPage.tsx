@@ -260,7 +260,6 @@ export default function RoomPage() {
 
   const canvasDocReff = doc(collection(roomDoc, "canvas"), "123");
 
-  const [message, setMessage] = useState<string | null>(null);
   const [currentElements, setCurrentElements] = useState<ExcalidrawElement[]>(
     []
   );
@@ -319,23 +318,6 @@ export default function RoomPage() {
           }}
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-            <Input
-              style={{
-                zIndex: 1222,
-                position: "absolute",
-                top: 200,
-                right: 0,
-                width: "40%",
-              }}
-              placeholder="mess"
-              onChange={(e) => setMessage(e.target.value)}
-              icon={<ArrowRight />}
-              onClick={() => {
-                if (message) {
-                  sendMessage(message);
-                }
-              }}
-            />
             {showWhiteboard ? (
               <Excalidraw
                 ref={excalidrawRef}

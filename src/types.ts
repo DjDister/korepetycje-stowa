@@ -8,6 +8,7 @@ export type Student = {
   email: string;
   photoURL: string;
   type?: accType;
+  isOnlyForMessages?: boolean;
 };
 export interface UserProfileData {
   emailVerified?: boolean;
@@ -39,6 +40,7 @@ export type Teacher = {
   amountOfStudents?: number;
   subjects?: string[];
   displayName?: string;
+  isOnlyForMessages?: boolean;
 };
 
 export interface UserMessages extends Teacher, Student {

@@ -122,6 +122,7 @@ export default function ProfilePage() {
                 <div className={styles.flexBox}>
                   <div className={styles.label}>Set new display name</div>
                   <Input
+                    value={newDisplayName}
                     customContainerStyle={{ width: "100%", height: "100%" }}
                     style={{ width: "100%", height: "100%" }}
                     placeholder={profile.displayName}
@@ -205,6 +206,7 @@ export default function ProfilePage() {
                 <div className={styles.flexBox}>
                   <div className={styles.label}>Set new display name</div>
                   <Input
+                    value={newPhoneNumber}
                     customContainerStyle={{ width: "100%", height: "100%" }}
                     style={{ width: "100%", height: "100%" }}
                     placeholder={profile.phoneNumber || ""}

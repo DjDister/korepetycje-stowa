@@ -171,6 +171,7 @@ export default function MessagesPage() {
           <div className={styles.labelContainer}>
             <div className={styles.chatsTitle}>Chats</div>
             <Input
+              value={search}
               style={{ width: "100%" }}
               placeholder="Search"
               onChange={(e) => setSearch(e.target.value)}
@@ -228,14 +229,19 @@ export default function MessagesPage() {
             <div className={styles.sendMessageContainer}>
               <Input
                 style={{ width: "100%" }}
+                value={messageToSend}
                 placeholder="Type your message"
                 onChange={(e) => setMessageToSend(e.target.value)}
                 icon={<ArrowRight />}
-                onClick={() => sendMessage(chosenUser)}
+                onClick={() => {
+                  sendMessage(chosenUser);
+                  setMessageToSend("");
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     sendMessage(chosenUser);
+                    setMessageToSend("");
                   }
                 }}
               />

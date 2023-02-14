@@ -32,10 +32,17 @@ const getTeachers = async (filter?: string | null) => {
   });
   const newTeachers = await Promise.all(
     teachers.map(async (teacher) => {
-      const students = await getDocs(
-        collection(db, "users", teacher.uid, "students")
-      );
-      teacher.amountOfStudents = students.docs.length;
+      const q = query(collection(db, "users", teacher.uid, "students"));
+      const querySnapshot = await getDocs(q);
+      const studentsArr = [];
+      querySnapshot.forEach(async (doc) => {
+        if (doc.data().isOnlyForMessages) {
+          return;
+        }
+        studentsArr.push(doc.data());
+      });
+
+      teacher.amountOfStudents = studentsArr.length;
       return teacher;
     })
   );

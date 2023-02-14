@@ -100,6 +100,7 @@ export default function LessonsPage() {
               <div className="titleNewLesson">New lesson </div>
               <div className="inputContainer">
                 <Input
+                  value={newRoomName}
                   placeholder="Name"
                   onChange={(e) => setNewRoomName(e.target.value)}
                   icon={<PlusIcon />}

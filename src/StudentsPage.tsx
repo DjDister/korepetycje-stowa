@@ -46,6 +46,7 @@ export default function StudentsPage() {
       const newStudents: Student[] = [];
       querySnapshot.forEach((doc) => {
         const studentToAdd = doc.data();
+        if (studentToAdd.isOnlyForMessages) return;
         newStudents.push(studentToAdd);
       });
       setStudents(newStudents);
@@ -60,6 +61,7 @@ export default function StudentsPage() {
       <div className="flexCenter">
         <div className="inputContaine">
           <Input
+            value={searchEmail}
             label={"Add student"}
             icon={<PlusIcon />}
             warning={warning}
@@ -76,6 +78,7 @@ export default function StudentsPage() {
             <div className="containerMargin">
               <div className="studentsSearchInputContainer">
                 <Input
+                  value={filter}
                   label={"Search"}
                   placeholder={"Search students"}
                   onChange={(e) => setFilter(e.target.value)}

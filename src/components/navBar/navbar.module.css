@@ -134,6 +134,7 @@ cursor: auto;
   padding-left: 15px;
   padding-right: 15px;
   cursor: pointer;
+  white-space: nowrap;
  }
 
  .signInButton:hover{

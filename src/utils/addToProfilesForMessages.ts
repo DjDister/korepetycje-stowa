@@ -3,38 +3,38 @@ import { db } from "../firebaseConfig";
 import { Student, UserProfileData, Teacher } from "../types";
 import converter from "./converter";
 
-const addUserToUsersStudents = async (
+const addToProfilesForMessages = async (
   user: UserProfileData,
   userToAddEmail: string,
   userToAddUid: string,
-  photoURL?: string | null
+  photoURL?: string | null,
+  isOnlyForMessages?: boolean
 ) => {
-  //to do add yourself as teacher to the student
   const teachersRef = doc(
     db,
     "users",
     userToAddUid,
-    "teachers",
+    "students",
     user.uid
   ).withConverter(converter<Teacher>());
   await setDoc(teachersRef, {
     email: user.email,
     uid: user.uid,
     photoURL: user.providerData[0].photoURL ?? "",
-    isOnlyForMessages: false,
+    isOnlyForMessages: isOnlyForMessages ?? false,
   });
   const studentsRef = doc(
     db,
     "users",
     user.uid,
-    "students",
+    "teachers",
     userToAddUid
   ).withConverter(converter<Student>());
   await setDoc(studentsRef, {
     email: userToAddEmail,
     uid: userToAddUid,
     photoURL: photoURL ?? "",
-    isOnlyForMessages: false,
+    isOnlyForMessages: isOnlyForMessages ?? false,
   });
 };
-export default addUserToUsersStudents;
+export default addToProfilesForMessages;

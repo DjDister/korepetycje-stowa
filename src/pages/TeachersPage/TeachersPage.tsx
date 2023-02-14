@@ -24,6 +24,7 @@ export default function TeachersPage() {
       const newTeachers: Teacher[] = [];
       querySnapshot.forEach((doc) => {
         const studentToAdd = doc.data();
+        if (studentToAdd.isOnlyForMessages) return;
         newTeachers.push(studentToAdd);
       });
       setTeachers(newTeachers);
@@ -33,12 +34,13 @@ export default function TeachersPage() {
   const [filter, setFilter] = useState<string>("");
   return (
     <Layout>
-      <div className="flexCenter">
+      <div className="flexCenter" style={{ minHeight: "auto" }}>
         {teachers.length > 0 ? (
-          <div className="studentsListContainer">
+          <div className="studentsListContainer" style={{ marginTop: 20 }}>
             <div className="containerMargin">
               <div className="studentsSearchInputContainer">
                 <Input
+                  value={filter}
                   label={"Search"}
                   placeholder={"Search teachers"}
                   onChange={(e) => setFilter(e.target.value)}
