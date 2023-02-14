@@ -33,7 +33,7 @@ export default function TeacherCard({
       teacher.uid
     );
     const document = await getDoc(docRef);
-    console.log(document.exists());
+
     if (!document.exists()) {
       await addToProfilesForMessages(
         profile,

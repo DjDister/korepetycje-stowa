@@ -1,4 +1,4 @@
-import { Excalidraw } from "@excalidraw/excalidraw";
+import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import {
   AppState,
@@ -18,10 +18,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ArrowLeft from "../components/Icons/ArrowLeft";
-import ArrowRight from "../components/Icons/ArrowRight";
 import Door from "../components/Icons/Door";
 import VideoCamera from "../components/Icons/VideoCamera";
-import Input from "../components/Input/Input";
 import { db } from "../firebaseConfig";
 import { useAppSelector } from "../redux/hooks";
 import servers from "../webRTCConfig";
@@ -313,7 +311,7 @@ export default function RoomPage() {
             position: "absolute",
             width: "100vw",
             height: "100vh",
-            backgroundColor: "yellow",
+
             zIndex: 0,
           }}
         >
@@ -324,8 +322,25 @@ export default function RoomPage() {
                 initialData={{ elements: JSON.parse(initialData.canvas) }}
                 onChange={handleChange}
                 isCollaborating={true}
-              />
-            ) : null}
+                UIOptions={{
+                  canvasActions: {
+                    changeViewBackgroundColor: false,
+                    clearCanvas: false,
+                    export: false,
+                    loadScene: false,
+                    saveToActiveFile: false,
+                    toggleTheme: null,
+                    saveAsImage: false,
+                  },
+                }}
+              >
+                <MainMenu />
+              </Excalidraw>
+            ) : (
+              <div className={styles.startContainer}>
+                StartSetup in left bottom corner
+              </div>
+            )}
           </div>
         </div>
         <div className={styles.roomDetailsContainer}>
@@ -334,7 +349,16 @@ export default function RoomPage() {
           </div>
           <div className={styles.roomNameConatiner}>{state.state.roomName}</div>
         </div>
-
+        <div
+          style={{
+            position: "absolute",
+            top: 15,
+            right: 15,
+            width: 83.83,
+            height: 38,
+            backgroundColor: "white",
+          }}
+        />
         <div className={styles.yourCameraContainer}>
           <div
             className={styles.cameraRelativeContainer}
