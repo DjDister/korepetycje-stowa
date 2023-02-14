@@ -148,14 +148,17 @@ export default function RoomPage() {
           const data = snapshot.data();
           if (!pc.currentRemoteDescription && data?.answer) {
             const answerDescription = new RTCSessionDescription(data.answer);
-            pc.setRemoteDescription(answerDescription);
+            if (!(pc.signalingState === "stable"))
+              pc.setRemoteDescription(answerDescription);
           }
         });
         onSnapshot(answerCandidates, (snapshot) => {
           snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
               let data = change.doc.data();
-              pc.addIceCandidate(new RTCIceCandidate(data));
+              if (pc.remoteDescription && !(pc.signalingState === "closed")) {
+                pc.addIceCandidate(new RTCIceCandidate(data));
+              }
             }
           });
         });
@@ -185,7 +188,9 @@ export default function RoomPage() {
           snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
               let data = change.doc.data();
-              pc.addIceCandidate(new RTCIceCandidate(data));
+              if (pc.remoteDescription && !(pc.signalingState === "closed")) {
+                pc.addIceCandidate(new RTCIceCandidate(data));
+              }
             }
           });
         });
