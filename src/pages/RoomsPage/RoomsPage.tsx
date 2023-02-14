@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import NavBar from "./components/navBar/navBar";
-import { db } from "./firebaseConfig";
+import { db } from "../../firebaseConfig";
 import {
   collection,
   addDoc,
@@ -11,14 +10,14 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-import { useAppSelector } from "./redux/hooks";
+import { useAppSelector } from "../../redux/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
-import LessonItem from "./components/LessonItem/LessonItem";
+import LessonItem from "../../components/LessonItem/LessonItem";
 import "./RoomsPage.css";
-import { Room } from "./types";
-import Input from "./components/Input/Input";
-import PlusIcon from "./components/Icons/PlusIcon";
-import Layout from "./components/Layout/Layout";
+import { Room } from "../../types";
+import Input from "../../components/Input/Input";
+import PlusIcon from "../../components/Icons/PlusIcon";
+import Layout from "../../components/Layout/Layout";
 
 export default function LessonsPage() {
   const [newRoomName, setNewRoomName] = useState("");
