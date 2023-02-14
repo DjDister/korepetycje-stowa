@@ -26,20 +26,16 @@ export function CheckInRoom() {
   const roomId = state.pathname.substring(35, 55);
 
   useEffect(() => {
-    if (!loginStatus.isLoggedIn) {
-      navigate("/login");
-    } else {
-      if (loginStatus.user && loginStatus.user.email)
-        setCheckInName(loginStatus.user.email);
+    if (loginStatus.user && loginStatus.user.email)
+      setCheckInName(loginStatus.user.email);
 
-      const fetchRoom = async () => {
-        const docRef = doc(db, "users", hostId, "rooms", roomId);
-        const docSnap = (await (await getDoc(docRef)).data()) as RoomData;
+    const fetchRoom = async () => {
+      const docRef = doc(db, "users", hostId, "rooms", roomId);
+      const docSnap = (await (await getDoc(docRef)).data()) as RoomData;
 
-        setRoomName(docSnap.roomName);
-      };
-      fetchRoom();
-    }
+      setRoomName(docSnap.roomName);
+    };
+    fetchRoom();
   }, []);
 
   const join = async () => {

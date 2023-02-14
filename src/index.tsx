@@ -12,8 +12,8 @@ import StudentsPage from "./StudentsPage";
 import LessonsPage from "./RoomsPage";
 import TeachersPage from "./pages/TeachersPage/TeachersPage";
 import MessagesPage from "./pages/MessagesPage/MessagesPage";
-import OurTeachersPage from "./pages/OurTeachersPage/OurTeachersPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import LoginStatusChecker from "./utils/LoginStatusChecker";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,24 +24,61 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
 
-  { path: "/lessons", element: <LessonsPage /> },
-  { path: "room/:userId/:roomId/checkin", element: <CheckInRoom /> },
-  { path: "/room/:userId/:roomId", element: <RoomPage /> },
+  {
+    path: "/lessons",
+    element: (
+      <LoginStatusChecker>
+        <LessonsPage />
+      </LoginStatusChecker>
+    ),
+  },
+  {
+    path: "room/:userId/:roomId/checkin",
+    element: (
+      <LoginStatusChecker>
+        <CheckInRoom />
+      </LoginStatusChecker>
+    ),
+  },
+  {
+    path: "/room/:userId/:roomId",
+    element: (
+      <LoginStatusChecker>
+        <RoomPage />
+      </LoginStatusChecker>
+    ),
+  },
   {
     path: "/students",
-    element: <StudentsPage />,
+    element: (
+      <LoginStatusChecker>
+        <StudentsPage />,
+      </LoginStatusChecker>
+    ),
   },
   {
     path: "/teachers",
-    element: <TeachersPage />,
+    element: (
+      <LoginStatusChecker>
+        <TeachersPage />,
+      </LoginStatusChecker>
+    ),
   },
   {
     path: "/messages",
-    element: <MessagesPage />,
+    element: (
+      <LoginStatusChecker>
+        <MessagesPage />,
+      </LoginStatusChecker>
+    ),
   },
   {
     path: "/profile",
-    element: <ProfilePage />,
+    element: (
+      <LoginStatusChecker>
+        <ProfilePage />,
+      </LoginStatusChecker>
+    ),
   },
 ]);
 

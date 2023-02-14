@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ArrowRight from "../../components/Icons/ArrowRight";
 import Copy from "../../components/Icons/Copy";
 import Pencil from "../../components/Icons/Pencil";
@@ -17,24 +17,19 @@ import { doc, updateDoc } from "firebase/firestore";
 import Phone from "../../components/Icons/Phone";
 import PencilStudy from "../../components/Icons/PencilStudy";
 import PersonStudy from "../../components/Icons/PersonStudy";
-import { useNavigate } from "react-router-dom";
+
 import { subjects } from "../../consts/subjects";
 
 export default function ProfilePage() {
-  const loginStatus = useAppSelector((state) => state.loginStatus);
   const { profile } = useAppSelector((state) => state.profile);
   const dispatch = useAppDispatch();
   const copyFunction = (text: string) => {
     navigator.clipboard.writeText(text);
   };
-  const navigate = useNavigate();
+
   const [isShowingInput, setIsShowingInput] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState(profile.displayName);
-  useEffect(() => {
-    if (!loginStatus.isLoggedIn) {
-      navigate("/login");
-    }
-  }, [loginStatus.isLoggedIn, navigate]);
+
   const userRef = doc(db, "users", profile.uid);
   const [newPhoneNumber, setNewPhoneNumber] = useState(
     profile.phoneNumber || ""

@@ -105,9 +105,8 @@ export default function LoginPage() {
   const [accType, setAccType] = useState<"student" | "teacher">("student");
   return (
     <div className="wholePage">
-      <div className="card"></div>
       <div className="leftSide">
-        <div className="insideLeft">
+        <div className="insideLeft" style={{ backgroundColor: "inherit" }}>
           <div className="register">
             {registerMode ? "Zarejestruj sie" : "Zaloguj sie"}
           </div>
