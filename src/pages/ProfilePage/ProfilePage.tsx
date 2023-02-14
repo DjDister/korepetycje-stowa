@@ -141,7 +141,10 @@ export default function ProfilePage() {
                   <div className={styles.label}>Display name:</div>
                   <div className={styles.flexRow}>
                     {profile.displayName}
-                    <div onClick={() => setIsShowingInput(!isShowingInput)}>
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setIsShowingInput(!isShowingInput)}
+                    >
                       <Pencil />
                     </div>
                   </div>
@@ -225,6 +228,7 @@ export default function ProfilePage() {
                   <div className={styles.flexRow}>
                     {profile.phoneNumber || "Not set"}
                     <div
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         setIsShowingPhoneInput(!isShowingPhoneInput)
                       }
