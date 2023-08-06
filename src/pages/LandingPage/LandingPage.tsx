@@ -5,7 +5,7 @@ import styles from "./LandingPage.module.css"
 export default function LandingPage() {
   return (
     <Layout>
-      <div className={styles.container}></div>
+      <div className={styles.container}>123</div>
     </Layout>
   )
 }
