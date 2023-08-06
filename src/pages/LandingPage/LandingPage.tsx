@@ -8,6 +8,8 @@ import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium"
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser"
 import PriceCheckIcon from "@mui/icons-material/PriceCheck"
 import GroupIcon from "@mui/icons-material/Group"
+import FlagCircleIcon from "@mui/icons-material/FlagCircle"
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled"
 
 const subjectsArray = [
   { subject: "math", teacherNum: 5 },
@@ -23,7 +25,8 @@ export default function LandingPage() {
 
   return (
     <Layout>
-      <div className={styles.container}>
+      <div className={styles.container} style={{ position: "relative" }}>
+        <div className={styles.circle}></div>
         <div className={styles.firstPart}>
           <div className={styles.titlePart}>
             <div
@@ -52,6 +55,67 @@ export default function LandingPage() {
             ></img>
           </div>
         </div>
+
+        <div className={styles.title} style={{ marginTop: "40px" }}>
+          We teach:
+        </div>
+        <div className={styles.subjectContainer}>
+          {subjectsArray.map((x, index) => (
+            <div key={index} className={styles.subjectElem}>
+              {x.subject}
+              <span style={{ color: "gray" }}>
+                {x.teacherNum} {x.teacherNum > 1 ? "teachers" : "teacher"}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className={styles.title} style={{ marginTop: "40px" }}>
+          Set yourself a goal
+        </div>
+        <div className={styles.goalContainer}>
+          <div className={styles.goalElement}>
+            <FlagCircleIcon className={styles.whyIcon} />
+            <span>Set what would you like to acomplish</span>
+          </div>
+          <div className={styles.goalElement}>
+            <AccessTimeFilledIcon className={styles.whyIcon} />
+            <span>Set what would you like to acomplish</span>
+          </div>
+          <div className={styles.goalElement}>
+            <FlagCircleIcon className={styles.whyIcon} />
+            <span>Set what would you like to acomplish</span>
+          </div>
+          <div className={styles.goalElement}>
+            <FlagCircleIcon className={styles.whyIcon} />
+            <span>Set what would you like to acomplish</span>
+          </div>
+        </div>
+        <div className={styles.title} style={{ marginTop: "40px" }}>
+          Why should you work with us?
+        </div>
+        <div className={styles.whyContainer}>
+          <div className={styles.whyElement}>
+            <VerifiedUserIcon className={styles.whyIcon} />
+            <span>Verified profiles</span>
+          </div>
+          <div className={styles.whyElement}>
+            <WorkspacePremiumIcon className={styles.whyIcon} />
+            <span>Expert tutors</span>
+          </div>
+          <div className={styles.whyElement}>
+            <PriceCheckIcon className={styles.whyIcon} />
+            <span>Affordable prices</span>
+          </div>
+          <div className={styles.whyElement}>
+            <GroupIcon className={styles.whyIcon} />
+            <span>Learn anytime</span>
+          </div>
+        </div>
+        <div className={styles.title} style={{ marginTop: "40px" }}>
+          How To get started
+        </div>
+        <VerticalLinearStepper />
+
         <div className={styles.ratingContainer}>
           {/* <div className={styles.ratingElement}>
             <Typography component="legend">Controlled</Typography>
@@ -103,44 +167,6 @@ export default function LandingPage() {
               Flexibility
             </Typography>
             <Rating name="read-only" value={value} readOnly />
-          </div>
-        </div>
-        <div className={styles.title} style={{ marginTop: "40px" }}>
-          We teach:
-        </div>
-        <div className={styles.subjectContainer}>
-          {subjectsArray.map((x, index) => (
-            <div key={index} className={styles.subjectElem}>
-              {x.subject}
-              <span style={{ color: "gray" }}>
-                {x.teacherNum} {x.teacherNum > 1 ? "teachers" : "teacher"}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className={styles.title} style={{ marginTop: "40px" }}>
-          How To get started
-        </div>
-        <VerticalLinearStepper />
-        <div className={styles.title} style={{ marginTop: "40px" }}>
-          Why should you work with us?
-        </div>
-        <div className={styles.whyContainer}>
-          <div className={styles.whyElement}>
-            <VerifiedUserIcon className={styles.whyIcon} />
-            <span>Verified profiles</span>
-          </div>
-          <div className={styles.whyElement}>
-            <WorkspacePremiumIcon className={styles.whyIcon} />
-            <span>Expert tutors</span>
-          </div>
-          <div className={styles.whyElement}>
-            <PriceCheckIcon className={styles.whyIcon} />
-            <span>Affordable prices</span>
-          </div>
-          <div className={styles.whyElement}>
-            <GroupIcon className={styles.whyIcon} />
-            <span>Learn anytime</span>
           </div>
         </div>
       </div>
