@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import Layout from "../../components/Layout/Layout"
 import styles from "./LandingPage.module.css"
-import { Typography, Rating, Accordion } from "@mui/material"
+import { Typography, Rating, Accordion, Button } from "@mui/material"
 
 const subjectsArray = [
   { subject: "math", teacherNum: 5 },
@@ -18,8 +18,19 @@ export default function LandingPage() {
   return (
     <Layout>
       <div className={styles.container}>
-        <div className={styles.title}>
-          Unlock your full potencial with our tutors
+        <div className={styles.firstPart}>
+          <div className={styles.titlePart}>
+            <div className={styles.title} style={{ color: "white" }}>
+              Unlock your full potencial with our tutors
+              <br />
+              <Button variant="contained" style={{ padding: "10px" }}>
+                Let's start
+              </Button>
+            </div>
+          </div>
+          <div className={styles.imagePart}>
+            <img src="../../images/frontImage.jpg" alt=""></img>
+          </div>
         </div>
         <div className={styles.ratingContainer}>
           <div className={styles.ratingElement}>
