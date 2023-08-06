@@ -1,23 +1,28 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./redux/store";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import RoomPage from "./pages/RoomPage/RoomPage";
-import StudentsPage from "./pages/StudentsPage/StudentsPage";
-import LessonsPage from "./pages/RoomsPage/RoomsPage";
-import TeachersPage from "./pages/TeachersPage/TeachersPage";
-import MessagesPage from "./pages/MessagesPage/MessagesPage";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import LoginStatusChecker from "./utils/LoginStatusChecker";
-import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon";
+import React from "react"
+import ReactDOM from "react-dom/client"
+import "./index.css"
+import App from "./App"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { Provider } from "react-redux"
+import store from "./redux/store"
+import LoginPage from "./pages/LoginPage/LoginPage"
+import RoomPage from "./pages/RoomPage/RoomPage"
+import StudentsPage from "./pages/StudentsPage/StudentsPage"
+import LessonsPage from "./pages/RoomsPage/RoomsPage"
+import TeachersPage from "./pages/TeachersPage/TeachersPage"
+import MessagesPage from "./pages/MessagesPage/MessagesPage"
+import ProfilePage from "./pages/ProfilePage/ProfilePage"
+import LoginStatusChecker from "./utils/LoginStatusChecker"
+import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon"
+import LandingPage from "./pages/LandingPage/LandingPage"
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/start",
+    element: <LandingPage />,
   },
   {
     path: "/login",
@@ -72,11 +77,9 @@ const router = createBrowserRouter([
       </LoginStatusChecker>
     ),
   },
-]);
+])
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <Provider store={store}>
     <div>
@@ -110,4 +113,4 @@ root.render(
       </div>
     </div>
   </Provider>
-);
+)
