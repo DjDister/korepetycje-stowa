@@ -18,7 +18,7 @@ export default function Layout({
       {isBackgroundDecorationVisible && <CustomBackgroundLayout />}
       {isNavbarVisible && (
         <div style={{ height: "10%" }}>
-          <NavBar customStyles={navbarCustomStyles} />
+          <NavBar />
         </div>
       )}
       <div style={{ height: isNavbarVisible ? "90%" : "100%" }}>{children}</div>
