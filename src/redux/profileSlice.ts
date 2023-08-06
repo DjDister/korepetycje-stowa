@@ -73,6 +73,9 @@ export const profileSlice = createSlice({
     addStudents: (state, action: PayloadAction<Student[]>) => {
       state.profile.students = [...state.profile.students, ...action.payload];
     },
+    clearProfile: (state) => {
+      state.profile = initialState.profile;
+    },
   },
 });
 
@@ -85,6 +88,7 @@ export const {
   updateDisplayName,
   updatePhoneNumber,
   updateSubjects,
+  clearProfile,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

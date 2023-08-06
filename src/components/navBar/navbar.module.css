@@ -1,184 +1,28 @@
 
-Link {
-  text-decoration: none;
-  color: inherit;
-}
-
- .mainContainer{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
- }
-
- .marginContainer{
-  width: 90%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
- }
-
- .logoContainer{
-  aspect-ratio: 1/1;
-  height: 100%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
- }
 
  .logoImage{
-  width: 100%;
-  height: 100%;
+  width: 52px;
+  height: 52px;
   object-fit: scale-down;
+  margin-right: 8px;
  }
-
- .logoName{
-  display: inline-block;
-  font-family: Arial;
-  font-size: 25px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  font-weight: bolder;
-  background: linear-gradient(to right, rgb(67, 124, 205), rgb(69, 214, 202));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+ .mobile{
+  display: block;
+  width: 48px;
+  height: 48px;
  }
+  .desktop {
+    display: none;
+  }
 
- .middleContainer{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto;
-  height: 100%;
-  flex-direction: row;
-  gap:15px;
- }
 
- .userIconContainer{
-  width: 25%;
-  gap:10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
- }
 
- .userIcon{
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
- }
+@media (min-width: 768px) {
+  .mobile{
+   display: none;
+  }
+  .desktop {
+    display: block;
+  }
 
- .popUpUserMenu{
-  width: 200px;
-  height: 200px;
-  position: absolute;
-  top: 100%;
-  right: 0%;
-  z-index: 2;
-cursor: auto;
-}
-
- .fullPageContainerMenuClose{
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  left: 0px;
-  top: 0px;
- }
-
- .buttonsContainer{
-  width: 25%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 15px;
-
- }
-
-.contactButton{
-  display:flex;
-  justify-content: center;
-  align-items: center;
-  outline: rgb(156, 155, 155) 1px solid;
-  border-radius: 25px;
-  background-color: white;
-  color: black;
-  padding: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.contactButton:hover{
-  background-color: rgb(104, 98, 98);
-  color: white;
-}
-
- .signInButton{
-  font-weight: 600;
-  display: flex;
-  background-color: black;
-  color:white;
-  border-radius: 25px;
-  padding: 10px;
-  padding-left: 15px;
-  padding-right: 15px;
-  cursor: pointer;
-  white-space: nowrap;
- }
-
- .signInButton:hover{
-  background-color: rgb(104, 98, 98);
-  color: white;
- }
-
- .middleLinkContainer{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto;
-  padding-left: 2px;
-  padding-right: 2px;
-  height: 100%;
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  color:#545a5d;
-  font-weight: 600;
- }
-
-.flexCenter{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color:#545a5d;
-}
-
-.middleLinkContainer::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: #545a5d;
-  transform-origin: bottom right;
-  transition: transform 0.2s ease-out;
-}
-
-.middleLinkContainer:hover::after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
 }
