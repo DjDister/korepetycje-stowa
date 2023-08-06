@@ -66,7 +66,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/profile",
+    path: "/settings",
     element: (
       <LoginStatusChecker>
         <ProfilePage />
