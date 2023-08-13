@@ -153,7 +153,7 @@ export default function ProfilePage() {
                 <div className={styles.tagsContainer}>
                   {subjects.map((subject, index) => (
                     <div
-                      onClick={() => updateThisTag(subject)}
+                      // onClick={() => updateThisTag(subject)}
                       key={index}
                       className={styles.subjectTag}
                       style={

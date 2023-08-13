@@ -24,7 +24,7 @@ function Navbar() {
     profile.type === "teacher"
       ? ["My students", "Messages"]
       : isLoggedIn
-      ? ["Find a teacher", "Messages"]
+      ? ["Find a teacher", "Messages", "Your's teachers"]
       : ["Find a teacher", "Become a teacher"];
   const settings =
     profile.type === "teacher"
@@ -65,13 +65,13 @@ function Navbar() {
         navigate("/my-students");
         break;
       case "Find a teacher":
-        navigate("/teachers");
+        navigate("/find-a-teacher");
         break;
       case "Become a teacher":
         navigate("/become-a-teacher");
         break;
-      case "Saved teachers":
-        navigate("/saved-teachers");
+      case "Your's teachers":
+        navigate("/teachers");
         break;
       case "Settings":
         navigate("/settings");

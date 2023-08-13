@@ -34,7 +34,13 @@ export default function TeachersPage() {
   const [filter, setFilter] = useState<string>("");
   return (
     <Layout>
-      <div className="flexCenter" style={{ minHeight: "auto" }}>
+      <div
+        className="flexCenter"
+        style={{
+          minHeight: "auto",
+          height: teachers.length === 0 ? "100%" : "",
+        }}
+      >
         {teachers.length > 0 ? (
           <div className="studentsListContainer" style={{ marginTop: 20 }}>
             <div className="containerMargin">

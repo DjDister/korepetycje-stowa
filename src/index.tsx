@@ -17,6 +17,7 @@ import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon";
 import LandingPage from "./pages/LandingPage/LandingPage";
 
 import { createTheme, ThemeProvider } from "@mui/material";
+import OurTeachersPage from "./pages/OurTeachersPage/OurTeachersPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/students",
+    path: "/my-students",
     element: (
       <LoginStatusChecker>
         <StudentsPage />
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
         <ProfilePage />
       </LoginStatusChecker>
     ),
+  },
+  {
+    path: "find-a-teacher",
+    element: <OurTeachersPage />,
   },
 ]);
 

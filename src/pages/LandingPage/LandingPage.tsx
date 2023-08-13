@@ -1,17 +1,16 @@
-import React from "react"
-import Layout from "../../components/Layout/Layout"
-import styles from "./LandingPage.module.css"
-import { Typography, Rating, Button } from "@mui/material"
-import VerticalLinearStepper from "./VeriticalStepper"
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium"
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser"
-import PriceCheckIcon from "@mui/icons-material/PriceCheck"
-import GroupIcon from "@mui/icons-material/Group"
-import FlagCircleIcon from "@mui/icons-material/FlagCircle"
-import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled"
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-
+import React from "react";
+import Layout from "../../components/Layout/Layout";
+import styles from "./LandingPage.module.css";
+import { Typography, Rating, Button } from "@mui/material";
+import VerticalLinearStepper from "./VeriticalStepper";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import PriceCheckIcon from "@mui/icons-material/PriceCheck";
+import GroupIcon from "@mui/icons-material/Group";
+import FlagCircleIcon from "@mui/icons-material/FlagCircle";
+import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 const subjectsArray = [
   { subject: "Math", teacherNum: 5 },
@@ -20,10 +19,10 @@ const subjectsArray = [
   { subject: "Biology", teacherNum: 3 },
   { subject: "IT", teacherNum: 4 },
   { subject: "Polish", teacherNum: 6 },
-]
+];
 
 export default function LandingPage() {
-const value = 5;
+  const value = 5;
   return (
     <Layout>
       <div className={styles.container} style={{ position: "relative" }}>
@@ -31,7 +30,7 @@ const value = 5;
           <div className={styles.titlePart}>
             <div
               className={styles.title}
-              style={{ color: "white", fontSize: "40px" }}
+              style={{ color: "white", fontSize: "40px", padding: 20 }}
             >
               Unlock your full potencial with our tutors
               <br />
@@ -115,7 +114,6 @@ const value = 5;
             <span>Learn anytime</span>
           </div>
         </div>
-     
 
         <div className={styles.ratingContainer}>
           {/* <div className={styles.ratingElement}>
@@ -172,5 +170,5 @@ const value = 5;
         </div>
       </div>
     </Layout>
-  )
+  );
 }

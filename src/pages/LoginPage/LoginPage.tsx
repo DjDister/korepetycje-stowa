@@ -84,12 +84,7 @@ export default function LoginPage() {
     signInWithEmailAndPassword(auth, formData.login, formData.password)
       .then(async (userCredential) => {
         const user = userCredential.user;
-        const userInfo = {
-          email: user.email ?? "",
-          displayName: user.displayName ?? "",
-          uid: user.uid,
-        };
-        afterSuccessLogin(userInfo);
+        afterSuccessLogin(user);
       })
       .catch((error) => {
         setFormData({ ...formData, error: error.code });
@@ -106,11 +101,7 @@ export default function LoginPage() {
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const user = result.user;
-        afterSuccessLogin({
-          email: user.email ?? "",
-          uid: user.uid,
-          displayName: user.displayName ?? "",
-        });
+        afterSuccessLogin(user);
       })
       .catch((error) => {
         setFormData({ ...formData, error: error.code });
@@ -118,15 +109,16 @@ export default function LoginPage() {
       });
   };
 
-  const afterSuccessLogin = async (user: {
-    email: string;
-    displayName: string;
-    uid: string;
-  }) => {
-    dispatch(loginSuccess(user));
+  const afterSuccessLogin = async (user: User) => {
+    dispatch(loginSuccess({ ...user }));
 
     const userData = await searchForUserWithEmail(user.email ?? "");
-    if (userData) dispatch(setUserProfile(userData));
+    if (userData) {
+      dispatch(setUserProfile(userData));
+    } else {
+      dispatch(setUserProfileFirstTime({ user: user, type: accType }));
+      writeUserToDatabase(db, user, accType);
+    }
     navigate("/");
   };
 
