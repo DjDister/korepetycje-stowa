@@ -9,14 +9,17 @@ import PriceCheckIcon from "@mui/icons-material/PriceCheck"
 import GroupIcon from "@mui/icons-material/Group"
 import FlagCircleIcon from "@mui/icons-material/FlagCircle"
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled"
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+
 
 const subjectsArray = [
-  { subject: "math", teacherNum: 5 },
-  { subject: "math", teacherNum: 1 },
-  { subject: "math", teacherNum: 2 },
-  { subject: "math", teacherNum: 3 },
+  { subject: "Math", teacherNum: 5 },
+  { subject: "English", teacherNum: 1 },
+  { subject: "German", teacherNum: 2 },
+  { subject: "Biology", teacherNum: 3 },
   { subject: "IT", teacherNum: 4 },
-  { subject: "polish", teacherNum: 6 },
+  { subject: "Polish", teacherNum: 6 },
 ]
 
 export default function LandingPage() {
@@ -34,7 +37,7 @@ const value = 5;
               <br />
               <Button
                 variant="contained"
-                style={{ padding: "20px" }}
+                style={{ padding: "20px", marginTop: "20px" }}
                 color="primary"
               >
                 Let's get started!
@@ -79,16 +82,17 @@ const value = 5;
             <span>Schedule your time</span>
           </div>
           <div className={styles.goalElement}>
-            <FlagCircleIcon className={styles.whyIcon} />
-            <span>Start being more productive and learning more </span>
+            <AccessibilityNewIcon className={styles.whyIcon} />
+            <span>Be more productive and learn effortlessly </span>
           </div>
           <div className={styles.goalElement}>
-            <FlagCircleIcon className={styles.whyIcon} />
+            <EmojiEventsIcon className={styles.whyIcon} />
             <span>Enjoy results!</span>
           </div>
+        
         </div>
         <div className={styles.title} style={{ marginTop: "40px" }}>
-          Why should you work with us?
+          Why exactly with us?
         </div>
         <div className={styles.whyContainer}>
           <div className={styles.whyElement}>
