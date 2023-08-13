@@ -1,9 +1,8 @@
-import React, { useState } from "react"
+import React from "react"
 import Layout from "../../components/Layout/Layout"
 import styles from "./LandingPage.module.css"
-import { Typography, Rating, Accordion, Button } from "@mui/material"
+import { Typography, Rating, Button } from "@mui/material"
 import VerticalLinearStepper from "./VeriticalStepper"
-import SafetyCheckIcon from "@mui/icons-material/SafetyCheck"
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium"
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser"
 import PriceCheckIcon from "@mui/icons-material/PriceCheck"
@@ -21,12 +20,10 @@ const subjectsArray = [
 ]
 
 export default function LandingPage() {
-  const [value, setValue] = useState<number | null>(4.5)
-
+const value = 5;
   return (
     <Layout>
       <div className={styles.container} style={{ position: "relative" }}>
-        <div className={styles.circle}></div>
         <div className={styles.firstPart}>
           <div className={styles.titlePart}>
             <div
