@@ -77,6 +77,7 @@ function Navbar() {
         navigate("/settings");
         break;
       case "Logout":
+        navigate("/");
         dispatch(logOut());
         dispatch(clearProfile());
         break;

@@ -20,6 +20,10 @@ import errorFeedback from "../../utils/errorMessages";
 import searchForUserWithEmail from "../../utils/searchForUserWithEmail";
 import writeUserToDatabase from "../../utils/writeUserToDatabase";
 import "./loginPage.css";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+const provider = new GoogleAuthProvider();
+
 const photoDefault =
   "https://cdn.midjourney.com/2cd09984-a602-4b3d-bc3b-e565bfba82b1/grid_0.png";
 export default function LoginPage() {
@@ -85,12 +89,7 @@ export default function LoginPage() {
           displayName: user.displayName ?? "",
           uid: user.uid,
         };
-
-        dispatch(loginSuccess(userInfo));
-
-        const userData = await searchForUserWithEmail(user.email ?? "");
-        if (userData) dispatch(setUserProfile(userData));
-        navigate("/");
+        afterSuccessLogin(userInfo);
       })
       .catch((error) => {
         setFormData({ ...formData, error: error.code });
@@ -102,6 +101,34 @@ export default function LoginPage() {
   const errorPrint = errorFeedback.find(
     (errorElem) => errorElem.code === formData.error
   );
+
+  const loginWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        afterSuccessLogin({
+          email: user.email ?? "",
+          uid: user.uid,
+          displayName: user.displayName ?? "",
+        });
+      })
+      .catch((error) => {
+        setFormData({ ...formData, error: error.code });
+        dispatch(loginFailure(error));
+      });
+  };
+
+  const afterSuccessLogin = async (user: {
+    email: string;
+    displayName: string;
+    uid: string;
+  }) => {
+    dispatch(loginSuccess(user));
+
+    const userData = await searchForUserWithEmail(user.email ?? "");
+    if (userData) dispatch(setUserProfile(userData));
+    navigate("/");
+  };
 
   const [registerMode, setRegisterMode] = useState(false);
   const [accType, setAccType] = useState<"student" | "teacher">("student");
@@ -172,7 +199,7 @@ export default function LoginPage() {
               </div>
             </div>
           ) : null}
-          {registerMode ? (
+          {/* {registerMode ? (
             <div>
               Choose account type:
               <div className="buttonsContainer">
@@ -198,7 +225,7 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-          ) : null}
+          ) : null} */}
           <div className="logInAndForgotPassword">
             <div className="logIn" onClick={registerMode ? register : login}>
               {registerMode ? "Register" : "Login"}
@@ -212,7 +239,7 @@ export default function LoginPage() {
           <div className="kreska">
             <div className="lub">lub</div>
           </div>
-          <div className="companyLogin">
+          <div className="companyLogin" onClick={loginWithGoogle}>
             <div className="icon">
               <GoogleIcon />
             </div>
