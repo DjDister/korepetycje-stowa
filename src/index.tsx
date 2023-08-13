@@ -1,29 +1,25 @@
-import React from "react"
-import ReactDOM from "react-dom/client"
-import "./index.css"
-import App from "./App"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { Provider } from "react-redux"
-import store from "./redux/store"
-import LoginPage from "./pages/LoginPage/LoginPage"
-import RoomPage from "./pages/RoomPage/RoomPage"
-import StudentsPage from "./pages/StudentsPage/StudentsPage"
-import LessonsPage from "./pages/RoomsPage/RoomsPage"
-import TeachersPage from "./pages/TeachersPage/TeachersPage"
-import MessagesPage from "./pages/MessagesPage/MessagesPage"
-import ProfilePage from "./pages/ProfilePage/ProfilePage"
-import LoginStatusChecker from "./utils/LoginStatusChecker"
-import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon"
-import LandingPage from "./pages/LandingPage/LandingPage"
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RoomPage from "./pages/RoomPage/RoomPage";
+import StudentsPage from "./pages/StudentsPage/StudentsPage";
+import LessonsPage from "./pages/RoomsPage/RoomsPage";
+import TeachersPage from "./pages/TeachersPage/TeachersPage";
+import MessagesPage from "./pages/MessagesPage/MessagesPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import LoginStatusChecker from "./utils/LoginStatusChecker";
+import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
-  },
-  {
-    path: "/start",
     element: <LandingPage />,
   },
   {
@@ -79,9 +75,11 @@ const router = createBrowserRouter([
       </LoginStatusChecker>
     ),
   },
-])
+]);
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 
 const theme = createTheme({
   palette: {
@@ -95,8 +93,8 @@ root.render(
   <ThemeProvider theme={theme}>
     <Provider store={store}>
       {/* <div> */}
-        <RouterProvider router={router} />
-        {/* <div className="infoBox">
+      <RouterProvider router={router} />
+      {/* <div className="infoBox">
           <QuestionMarkIcon />
         </div>
         <div className="hiddenBox">
