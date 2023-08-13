@@ -94,9 +94,9 @@ const theme = createTheme({
 root.render(
   <ThemeProvider theme={theme}>
     <Provider store={store}>
-      <div>
+      {/* <div> */}
         <RouterProvider router={router} />
-        <div className="infoBox">
+        {/* <div className="infoBox">
           <QuestionMarkIcon />
         </div>
         <div className="hiddenBox">
@@ -123,8 +123,8 @@ root.render(
           <div className="lineFull">email: student@gmail.com</div>
           <div className="lineFull">password: student</div>
         </div>
-      </div>
-      <div className="hiddenBox">
+      </div> */}
+      {/* <div className="hiddenBox">
         Hi, if you want to test some things:
         <div className="lineFull">
           Whiteboard + video call: students/teacher page {`->`} icon of person{" "}
@@ -147,7 +147,7 @@ root.render(
         </div>
         <div className="lineFull">email: student@gmail.com</div>
         <div className="lineFull">password: student</div>
-      </div>
+      </div> */}
     </Provider>
   </ThemeProvider>
 );
