@@ -178,9 +178,8 @@ export default function ProfilePage() {
                 onClick={() => copyFunction(profile.email)}
                 customStyles={{
                   backgroundColor: "#EDDAFD",
-                  width: "40%",
-                  height: 75,
                 }}
+                className={styles.card}
               />
               <InformationCard
                 label={"Join date:"}
@@ -191,9 +190,8 @@ export default function ProfilePage() {
                 onClick={() => copyFunction("12.12")}
                 customStyles={{
                   backgroundColor: "#EBFCD5",
-                  width: "40%",
-                  height: 75,
                 }}
+                className={styles.card}
               />
             </div>
             <div className={styles.phoneContainer}>

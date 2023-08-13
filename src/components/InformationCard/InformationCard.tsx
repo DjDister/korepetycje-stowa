@@ -7,6 +7,7 @@ export default function InformationCard({
   customStyles,
   onClick,
   labelStyle,
+  className,
 }: {
   label: string;
   text: string;
@@ -14,9 +15,13 @@ export default function InformationCard({
   customStyles?: React.CSSProperties;
   onClick?: () => void;
   labelStyle?: React.CSSProperties;
+  className?: string;
 }) {
   return (
-    <div className={styles.emailContainer} style={customStyles}>
+    <div
+      className={`${styles.emailContainer} ${className}`}
+      style={customStyles}
+    >
       <div>
         <div style={labelStyle}>{label}</div>
         {text}
