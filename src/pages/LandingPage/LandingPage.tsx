@@ -76,15 +76,15 @@ const value = 5;
           </div>
           <div className={styles.goalElement}>
             <AccessTimeFilledIcon className={styles.whyIcon} />
-            <span>Set what would you like to acomplish</span>
+            <span>Schedule your time</span>
           </div>
           <div className={styles.goalElement}>
             <FlagCircleIcon className={styles.whyIcon} />
-            <span>Set what would you like to acomplish</span>
+            <span>Start being more productive and learning more </span>
           </div>
           <div className={styles.goalElement}>
             <FlagCircleIcon className={styles.whyIcon} />
-            <span>Set what would you like to acomplish</span>
+            <span>Enjoy results!</span>
           </div>
         </div>
         <div className={styles.title} style={{ marginTop: "40px" }}>

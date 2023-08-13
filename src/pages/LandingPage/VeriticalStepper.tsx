@@ -11,22 +11,17 @@ import styles from "./LandingPage.module.css"
 
 const steps = [
   {
-    label: "Select campaign settings",
-    description: `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`,
+    label: "Set a Goal",
+    description: `Start by defining your objective for taking the math extra classes. Are you looking to improve your grades, deepen your understanding of certain topics, or prepare for a specific exam? Setting a clear goal will help you stay motivated and focused throughout the learning process.`,
   },
   {
-    label: "Create an ad group",
+    label: "Choose a Teacher",
     description:
-      "An ad group contains one or more ads which target a shared set of keywords.",
+      "Research and select a qualified math teacher or tutoring program that aligns with your goals. Look for teachers with strong expertise in the subjects you need help with. Check their qualifications, teaching methods, reviews, and teaching materials. You might also want to consider whether you prefer in-person classes, online lessons, or a combination of both.",
   },
   {
-    label: "Create an ad",
-    description: `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`,
+    label: "Start Learning",
+    description: `Once you've chosen a teacher or program, enroll in the extra math classes and begin your learning journey. Attend classes regularly and actively participate by asking questions and practicing problems. Make sure to take notes and review them after each session. Practice consistently, complete assignments, and work through practice problems to reinforce your understanding. Remember that consistent effort is key to making progress in math.`,
   },
 ]
 

@@ -30,8 +30,8 @@
   align-items: center;
 }
 .imageImg {
-  width: 550px;
-  height: 550px;
+  width: 450px;
+  height: 450px;
 }
 .title {
   font-size: xx-large;
@@ -120,11 +120,20 @@
 
   .firstPart {
     flex-direction: column;
+    height: 900px;
+    padding-bottom: 30px;
   }
   .titlePart {
     padding-top: 20px;
     padding-left: 20px;
+    padding-right: 20px;
     width: 100%;
+  }
+  .subjectContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   .imagePart {
     width: 100%;
