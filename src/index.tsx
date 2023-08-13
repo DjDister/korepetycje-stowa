@@ -15,6 +15,8 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage"
 import LoginStatusChecker from "./utils/LoginStatusChecker"
 import QuestionMarkIcon from "./components/Icons/QuestionMarkIcon"
 import LandingPage from "./pages/LandingPage/LandingPage"
+
+import { createTheme, ThemeProvider } from "@mui/material";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,7 +72,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/profile",
+    path: "/settings",
     element: (
       <LoginStatusChecker>
         <ProfilePage />
@@ -80,12 +82,47 @@ const router = createBrowserRouter([
 ])
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: "#192435",
+    },
+  },
+});
+
 root.render(
-  <Provider store={store}>
-    <div>
-      <RouterProvider router={router} />
-      <div className="infoBox">
-        <QuestionMarkIcon />
+  <ThemeProvider theme={theme}>
+    <Provider store={store}>
+      <div>
+        <RouterProvider router={router} />
+        <div className="infoBox">
+          <QuestionMarkIcon />
+        </div>
+        <div className="hiddenBox">
+          Hi, if you want to test some things:
+          <div className="lineFull">
+            Whiteboard + video call: students/teacher page {`->`} icon of person{" "}
+            {`->`} choose lesson / create as teacher{" "}
+          </div>
+          <div className="lineFull">
+            Only teacher can add students and create new lessons
+          </div>
+          <div className="lineFull">
+            Whiteboard is saved on leaving a lesson, so you can come back to it
+          </div>
+          <div className="lineFull">Student can rate teachers</div>
+          <div style={{ marginTop: 20 }} className="lineFull">
+            Teacher acc:{" "}
+          </div>
+          <div className="lineFull">email: teacher@gmail.com</div>
+          <div className="lineFull">password: teacher</div>
+          <div style={{ marginTop: 20 }} className="lineFull">
+            Student acc:{" "}
+          </div>
+          <div className="lineFull">email: student@gmail.com</div>
+          <div className="lineFull">password: student</div>
+        </div>
       </div>
       <div className="hiddenBox">
         Hi, if you want to test some things:
@@ -111,6 +148,6 @@ root.render(
         <div className="lineFull">email: student@gmail.com</div>
         <div className="lineFull">password: student</div>
       </div>
-    </div>
-  </Provider>
-)
+    </Provider>
+  </ThemeProvider>
+);

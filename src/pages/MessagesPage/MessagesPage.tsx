@@ -20,6 +20,8 @@ import { Message, Student, Teacher, UserMessages } from "../../types";
 import converter from "../../utils/converter";
 import getUserDisplayNameWithUid from "../../utils/getUserDisplayNameWithUid";
 import styles from "./MessagesPage.module.css";
+import useIsMobile from "../../utils/isMobile";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export default function MessagesPage() {
   const { state } = useLocation();
   const profile = useAppSelector((state) => state.profile).profile;
@@ -105,9 +107,7 @@ export default function MessagesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.type, profile.uid, studentsOrTeachers]);
 
-  const [chosenUser, setChosenUser] = useState<UserMessages>(
-    usersAndMessages[0]
-  );
+  const [chosenUser, setChosenUser] = useState<UserMessages | null>(null);
   const [search, setSearch] = useState<string>("");
   const [messageToSend, setMessageToSend] = useState<string>("");
 
@@ -165,51 +165,79 @@ export default function MessagesPage() {
     }
   }, [chosenUser, profile.type, profile.uid]);
 
+  useEffect(() => {
+    if (messRef.current) {
+      messRef.current.scrollTop = messRef.current.scrollHeight;
+    }
+  }, [chosenuserMessages]);
+
   const messRef = useRef<HTMLDivElement>(null);
-  if (messRef.current) {
-    messRef.current.scrollTop = messRef.current.scrollHeight;
-  }
+
+  const isMobile = useIsMobile();
+  const isMobileAndChosenUser = isMobile && chosenUser ? true : false;
 
   return (
     <Layout>
-      <div className={styles.pageSplitter}>
-        <div className={styles.latestsMessagesContainer}>
-          <div className={styles.labelContainer}>
-            <div className={styles.chatsTitle}>Chats</div>
-            <Input
-              value={search}
-              style={{ width: "100%" }}
-              placeholder="Search"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          {usersAndMessages
-            .filter((mess, index, arr) => {
-              return index === arr.findIndex((o) => o.uid === mess.uid);
-            })
-            .filter((mess) => mess.email.includes(search))
-            .map((message, index) => (
-              <MessageUserProfile
-                uid={message.uid}
-                customStyles={{ width: "100%" }}
-                key={index}
-                iconUrl={message.photoURL}
-                name={message.displayName || message.email}
-                message={
-                  message.messages[message.messages.length - 1]
-                    ? message.messages[message.messages.length - 1].text
-                    : ""
-                }
-                onClick={() => {
-                  setChosenUser(message);
-                }}
+      <div
+        className={styles.pageSplitter}
+        style={{
+          display: isMobileAndChosenUser ? "flex" : "",
+          flexDirection: isMobileAndChosenUser ? "column" : "row",
+        }}
+      >
+        {isMobileAndChosenUser ? null : (
+          <div className={styles.latestsMessagesContainer}>
+            <div className={styles.labelContainer}>
+              <div className={styles.chatsTitle}>Chats</div>
+              <Input
+                value={search}
+                style={{ width: "100%" }}
+                placeholder="Search"
+                onChange={(e) => setSearch(e.target.value)}
               />
-            ))}
-        </div>
+            </div>
+            {usersAndMessages
+              .filter((mess, index, arr) => {
+                return index === arr.findIndex((o) => o.uid === mess.uid);
+              })
+              .filter((mess) => mess.email.includes(search))
+              .map((message, index) => (
+                <MessageUserProfile
+                  uid={message.uid}
+                  customStyles={{ width: "calc(100% - 2px)" }}
+                  key={index}
+                  iconUrl={message.photoURL}
+                  name={message.displayName || message.email}
+                  message={
+                    message.messages[message.messages.length - 1]
+                      ? message.messages[message.messages.length - 1].text
+                      : ""
+                  }
+                  onClick={() => {
+                    setChosenUser(message);
+                  }}
+                />
+              ))}
+          </div>
+        )}
         {chosenUser ? (
-          <div className={styles.chatContainer}>
+          <div
+            className={styles.chatContainer}
+            style={{
+              width: isMobileAndChosenUser ? "100%" : "",
+            }}
+          >
             <div className={styles.userChatContainer}>
               <div className={styles.chosenUserContainer}>
+                <div
+                  style={{
+                    display: "flex",
+                    marginRight: "10px",
+                  }}
+                  onClick={() => setChosenUser(null)}
+                >
+                  <ArrowBackIcon />
+                </div>
                 <img
                   className={styles.userIcon}
                   src={chosenUser.photoURL}

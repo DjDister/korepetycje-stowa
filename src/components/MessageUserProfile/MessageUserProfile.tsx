@@ -50,7 +50,7 @@ export default function MessageUserProfile({
   }, [profile.type, profile.uid, uid]);
 
   return (
-    <div className={styles.container} style={customStyles}>
+    <div onClick={onClick} className={styles.container} style={customStyles}>
       <div className={styles.wrapper}>
         <div className={styles.profileIcon}>
           <div className={styles.overflowHidden}>

@@ -1,6 +1,7 @@
 import React from "react";
 import NavBar from "../navBar/navBar";
 import CustomBackgroundLayout from "./CustomBackgroundLayout";
+import styles from "./Layout.module.css";
 
 export default function Layout({
   children,
@@ -16,12 +17,8 @@ export default function Layout({
   return (
     <div style={{ width: "100%", height: "100vh", position: "relative" }}>
       {isBackgroundDecorationVisible && <CustomBackgroundLayout />}
-      {isNavbarVisible && (
-        <div style={{ height: "10%" }}>
-          <NavBar customStyles={navbarCustomStyles} />
-        </div>
-      )}
-      <div style={{ height: isNavbarVisible ? "90%" : "100%" }}>{children}</div>
+      {isNavbarVisible && <NavBar />}
+      <div className={isNavbarVisible ? styles.container : ""}>{children}</div>
     </div>
   );
 }
