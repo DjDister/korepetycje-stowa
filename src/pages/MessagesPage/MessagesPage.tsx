@@ -165,10 +165,13 @@ export default function MessagesPage() {
     }
   }, [chosenUser, profile.type, profile.uid]);
 
+  useEffect(() => {
+    if (messRef.current) {
+      messRef.current.scrollTop = messRef.current.scrollHeight;
+    }
+  }, [chosenuserMessages]);
+
   const messRef = useRef<HTMLDivElement>(null);
-  if (messRef.current) {
-    messRef.current.scrollTop = messRef.current.scrollHeight;
-  }
 
   const isMobile = useIsMobile();
   const isMobileAndChosenUser = isMobile && chosenUser ? true : false;
