@@ -89,8 +89,11 @@ const value = 5;
             <EmojiEventsIcon className={styles.whyIcon} />
             <span>Enjoy results!</span>
           </div>
-        
         </div>
+        <div className={styles.title} style={{ marginTop: "40px" }}>
+          How To get started
+        </div>
+        <VerticalLinearStepper />
         <div className={styles.title} style={{ marginTop: "40px" }}>
           Why exactly with us?
         </div>
@@ -112,10 +115,7 @@ const value = 5;
             <span>Learn anytime</span>
           </div>
         </div>
-        <div className={styles.title} style={{ marginTop: "40px" }}>
-          How To get started
-        </div>
-        <VerticalLinearStepper />
+     
 
         <div className={styles.ratingContainer}>
           {/* <div className={styles.ratingElement}>
