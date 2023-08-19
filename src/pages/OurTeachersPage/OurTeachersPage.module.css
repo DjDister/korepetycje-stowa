@@ -5,7 +5,7 @@
     justify-content: center;
     height: 100%;
     width: 100%;
-    min-height: 800px;
+    min-height: 1000px;
  
 }
 
@@ -30,8 +30,13 @@
 .teachersTitle{
     font-size: 30px;
     font-weight: 600;
-    color: #000;
+    color: white;
     display: flex;
+    background-color: #192435;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 100%;
 }
 
 .ourTeachersContainer{
@@ -41,6 +46,7 @@
     flex-wrap: wrap;
     gap: 20px;
     min-height: calc(320px *2 + 60px);
+    padding-top: 30px;
     
 }
 
@@ -48,7 +54,7 @@
     cursor: pointer;
     font-size: 20px;
     font-weight: 600;
-    color: #000;
+    color: white;
     position: absolute;
     right:0px;
     top:50%;
@@ -56,6 +62,8 @@
     padding-left: 20px;
     padding-right: 20px;
     z-index: 2;
+    background-color: #192435;
+    border-radius: 3px;
 }
 
 .dropDownMenu{
@@ -79,4 +87,21 @@
     padding-top:2px;
     padding-bottom: 2px;
     border-radius: 5px;
+}
+
+@media screen and (max-width: 1000px){
+    .ourTeachersLabel{
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+        row-gap: 30px;
+    }
+    .dropDownButton{
+        position: unset;
+
+    }
+    .ourTeachersContainer{
+        justify-content: center;
+    }
+
 }
