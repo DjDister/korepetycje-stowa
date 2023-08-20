@@ -1,5 +1,5 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebaseConfig";
 import { Rating, Student } from "../../types";
@@ -21,13 +21,14 @@ export default function StudentCard({
   studentId: string;
   rating?: number;
 }) {
+  const [showDiv, setShowDiv] = useState(false);
   const icons = [
     {
       icon: <StudentIcon />,
       url: "/lessons",
-      params: { studentId: studentId, belongsToUserId: belongsToUserId },
+      params: { studentId: studentId, belongsToUserId },
     },
-    { icon: <Phone />, url: "/", params: null },
+    { icon: <Phone />, url: "/", params: null, message: "Nr tel: 123456789"  },
     {
       icon: <Chat />,
       url: "/messages",
@@ -77,12 +78,26 @@ export default function StudentCard({
       <div>{student.type === "teacher" ? "Teacher" : "Student"}</div>
       <div className={styles.iconsContainer}>
         {icons.map((icon, index) => (
-          <div className={styles.iconContainer} key={index}>
+              <div
+              className={styles.iconContainer}
+              key={index}
+              onMouseEnter={() => {
+                if (icon.message) {
+                  setShowDiv(true); 
+                }
+              }}
+              onMouseLeave={() => setShowDiv(false)}
+            >
             <div onClick={() => navigate(icon.url, { state: icon.params })}>
               {icon.icon}
             </div>
           </div>
         ))}
+        {showDiv && (
+        <div className={styles.messageDiv}>
+         {student.email}(Phone number)
+        </div>
+      )}
       </div>
     </div>
   );

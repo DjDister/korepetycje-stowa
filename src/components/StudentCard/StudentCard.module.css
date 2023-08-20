@@ -10,6 +10,7 @@ display: flex;
 justify-content: space-around;
 align-items: center;
 flex-direction: column;
+position: relative;
 }
 .imageContainer{
     width: 136px;
@@ -54,4 +55,12 @@ cursor: pointer;
   line-height: 24px;
   color: #3C3C3C;
   text-overflow: ellipsis;
+}
+.messageDiv{
+  position: absolute;
+  color: white;
+  background-color: #3C3C3C;
+  bottom: 50px;
+  padding: 10px;
+  left: 50;
 }
