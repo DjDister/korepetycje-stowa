@@ -1,0 +1,50 @@
+.bottomMenuContainer {
+    display: flex;
+    flex-direction: row;
+    height: 80px;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leaveButton {
+    cursor: pointer;
+    padding: 5px;
+}
+  
+.leftOptions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 0.25;
+}
+
+.roomName{
+    font-size: large;
+    font-weight: 500;
+    color: white;
+}
+
+.circleButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.middleOptions{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rightOptions {
+    flex: 0.25;
+    display: flex;
+    justify-content: flex-end;
+}

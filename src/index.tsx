@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import LoginPage from "./pages/LoginPage/LoginPage";
-import RoomPage from "./pages/RoomPage/RoomPage";
+import RoomPage from "./pages/RoomPage/containers/RoomPage";
 import StudentsPage from "./pages/StudentsPage/StudentsPage";
 import LessonsPage from "./pages/RoomsPage/RoomsPage";
 import TeachersPage from "./pages/TeachersPage/TeachersPage";

@@ -58,3 +58,10 @@ export type Rating = {
   givenBy: string;
   rating: number;
 };
+
+export type Attendee = {
+  checkInName: string;
+  userId: string;
+  rank: string;
+  accepted: string;
+};
