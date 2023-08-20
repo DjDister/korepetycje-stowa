@@ -5,6 +5,7 @@ import { subjects } from "../../consts/subjects";
 import { Teacher } from "../../types";
 import getTeachers from "../../utils/getTeachers";
 import styles from "./OurTeachersPage.module.css";
+import ArrowRight from "../../components/Icons/ArrowRight";
 
 function OurTeachersPage() {
   const [isOpenDropDownMenu, setIsOpenDropDownMenu] = useState(false);
@@ -43,7 +44,7 @@ function OurTeachersPage() {
             className={styles.dropDownButton}
             onClick={() => setIsOpenDropDownMenu(!isOpenDropDownMenu)}
           >
-            Subject
+            Filtry { <ArrowRight/>}
             {isOpenDropDownMenu ? (
               <div className={styles.dropDownMenu}>
                 <div
