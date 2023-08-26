@@ -192,6 +192,7 @@ export default function RoomPage() {
         refresh: true,
       },
     });
+    window.location.reload();
   };
 
   useEffect(() => {
