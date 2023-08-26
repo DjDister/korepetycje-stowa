@@ -23,13 +23,22 @@ import servers from "../../../webRTCConfig";
 import { Attendee } from "../../../types";
 import RoomPageComponent from "../components/RoomPage";
 
+const pc = new RTCPeerConnection(servers);
+
 export default function RoomPage() {
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(false);
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const [otherUser, setOtherUser] = useState<Attendee | undefined>(undefined);
+  const [localStream, setLocalStream] = useState<MediaStream | undefined>(
+    undefined
+  );
+  const [remoteStream, setRemoteStream] = useState<MediaStream | undefined>(
+    undefined
+  );
   const state = useLocation();
-  const loginStatus = useAppSelector((state) => state.loginStatus);
+  const localRef = useRef<HTMLVideoElement | null>(null);
+  const remoteRef = useRef<HTMLVideoElement | null>(null);
+
   const roomId = state.pathname.substring(35, 55);
   const { profile } = useAppSelector((state) => state.profile);
   const roomDoc = doc(
@@ -43,12 +52,125 @@ export default function RoomPage() {
   );
   const attendeesDbRef = collection(roomDoc, "attendees");
   useEffect(() => {
+    const requestAudioAndVideo = async () => {
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+          video: true,
+        })
+        .then(async (stream) => {
+          stream.getVideoTracks()[0].enabled = false;
+          const videoTrack = stream.getVideoTracks()[0];
+          const audioTrack = stream.getAudioTracks()[0];
+          if (videoTrack.enabled) setIsCameraOn(true);
+          if (audioTrack.enabled) setIsMicrophoneOn(true);
+          setLocalStream(stream);
+          stream.getTracks().forEach((track) => {
+            pc.addTrack(track, stream);
+          });
+          const remoteStreamMedia = new MediaStream();
+          pc.ontrack = (event) => {
+            event.streams[0].getTracks().forEach((track) => {
+              remoteStreamMedia.addTrack(track);
+              setRemoteStream(remoteStreamMedia);
+            });
+          };
+          if (localRef.current) {
+            localRef.current.srcObject = stream;
+          }
+          if (remoteRef.current)
+            remoteRef.current.srcObject = remoteStreamMedia;
+          const callDocRef = doc(roomDoc, "calls", "call1");
+          const callDoc = await getDoc(callDocRef);
+          if (!callDoc.exists()) {
+            const offerCandidatesRef = collection(
+              callDocRef,
+              "offerCandidates"
+            );
+            const answerCandidatesRef = collection(
+              callDocRef,
+              "answerCandidates"
+            );
+            pc.onicecandidate = (event) => {
+              event.candidate &&
+                setDoc(doc(offerCandidatesRef), event.candidate.toJSON());
+            };
+
+            const offerDescription = await pc.createOffer();
+            await pc.setLocalDescription(offerDescription);
+            const offer = {
+              sdp: offerDescription.sdp,
+              type: offerDescription.type,
+            };
+            await setDoc(callDocRef, { offer });
+            onSnapshot(callDocRef, (snapshot) => {
+              const data = snapshot.data();
+              if (!pc.currentRemoteDescription && data?.answer) {
+                const answerDescription = new RTCSessionDescription(
+                  data.answer
+                );
+                pc.setRemoteDescription(answerDescription);
+              }
+            });
+            onSnapshot(answerCandidatesRef, (snapshot) => {
+              snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                  const candidate = new RTCIceCandidate(change.doc.data());
+                  pc.addIceCandidate(candidate);
+                }
+              });
+            });
+          } else {
+            const offerCandidatesRef = collection(
+              callDocRef,
+              "offerCandidates"
+            );
+            const answerCandidatesRef = collection(
+              callDocRef,
+              "answerCandidates"
+            );
+            pc.onicecandidate = (event) => {
+              event.candidate &&
+                setDoc(doc(answerCandidatesRef), event.candidate.toJSON());
+            };
+            const callData = callDoc.data();
+            const offerDescription = callData.offer;
+            await pc.setRemoteDescription(
+              new RTCSessionDescription(offerDescription)
+            );
+            const answerDescription = await pc.createAnswer();
+            await pc.setLocalDescription(answerDescription);
+            const answer = {
+              type: answerDescription.type,
+              sdp: answerDescription.sdp,
+            };
+            await updateDoc(callDocRef, { answer });
+            onSnapshot(offerCandidatesRef, (snapshot) => {
+              snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                  let data = change.doc.data();
+                  pc.addIceCandidate(new RTCIceCandidate(data));
+                }
+              });
+            });
+          }
+          pc.onconnectionstatechange = (event) => {
+            if (pc.connectionState === "disconnected") {
+              console.log(`disconnected`);
+              hangUp();
+            }
+          };
+        })
+        .catch((err) => {
+          console.log(`err`, err);
+        });
+    };
+    requestAudioAndVideo();
     const q = query(attendeesDbRef);
     onSnapshot(q, (querySnapshot) => {
       const fetchAtendees: Attendee[] = [];
       querySnapshot.forEach((doc) => {
         const atendee = doc.data() as Attendee;
-
         fetchAtendees.push(atendee);
       }, []);
 
@@ -59,6 +181,8 @@ export default function RoomPage() {
 
   const navigate = useNavigate();
   const hangUp = async () => {
+    pc.close();
+
     await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
 
     navigate(`/lessons`, {
@@ -70,16 +194,40 @@ export default function RoomPage() {
     });
   };
 
+  useEffect(() => {
+    updateDoc(doc(attendeesDbRef, state.state.yourAttendeeId), {
+      audio: isMicrophoneOn,
+      video: isCameraOn,
+    });
+  }, [attendeesDbRef, isCameraOn, isMicrophoneOn, state.state.yourAttendeeId]);
+
+  const onMicrophoneClick = async () => {
+    const audioTrack = localStream?.getAudioTracks()[0];
+    if (!audioTrack) return;
+    audioTrack.enabled = !audioTrack.enabled;
+    setIsMicrophoneOn(audioTrack.enabled);
+  };
+
+  const handleCameraClick = async () => {
+    const videoTrack = localStream?.getVideoTracks()[0];
+    if (!videoTrack) return;
+    videoTrack.enabled = !videoTrack.enabled;
+    setIsCameraOn(videoTrack.enabled);
+  };
   return (
-    <RoomPageComponent
-      attendees={attendees}
-      isMicrophoneOn={isMicrophoneOn}
-      setIsMicrophoneOn={setIsMicrophoneOn}
-      hangUp={hangUp}
-      roomName={state.state.lesson.roomName}
-      isCameraOn={isCameraOn}
-      setIsCameraOn={setIsCameraOn}
-    />
+    <div>
+      <RoomPageComponent
+        localStream={localStream}
+        remoteStream={remoteStream}
+        attendees={attendees}
+        isMicrophoneOn={isMicrophoneOn}
+        setIsMicrophoneOn={onMicrophoneClick}
+        hangUp={hangUp}
+        roomName={state.state.lesson.roomName}
+        isCameraOn={isCameraOn}
+        setIsCameraOn={handleCameraClick}
+      />
+    </div>
   );
 }
 export function areObjectsEqual(object1: any, object2: any) {

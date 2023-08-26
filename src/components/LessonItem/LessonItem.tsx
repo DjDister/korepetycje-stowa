@@ -46,10 +46,11 @@ export default function LessonItem({
     );
 
     const atendee = {
-      checkInName: profile.displayName || profile.email,
+      userName: profile.displayName || profile.email,
       userId: profile.uid,
       rank: belongsToUserId === profile.uid ? "admin" : "user",
-      accepted: "true",
+      video: false,
+      audio: false,
     };
     const atendeeId = await addDoc(roomsRef, atendee);
 

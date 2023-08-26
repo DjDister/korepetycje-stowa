@@ -13,13 +13,23 @@
   padding: 10px;
 }
 
-.attendeesContainer{
+.topContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #202124;
+  flex: 1;
+}
+
+.attendeesContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
   overflow-y: auto;
-  height: 100%;
-  position: relative;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 

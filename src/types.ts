@@ -60,8 +60,10 @@ export type Rating = {
 };
 
 export type Attendee = {
-  checkInName: string;
+  userName: string;
   userId: string;
   rank: string;
-  accepted: string;
+  video: boolean;
+  audio: boolean;
+  peerConnection: RTCPeerConnection;
 };

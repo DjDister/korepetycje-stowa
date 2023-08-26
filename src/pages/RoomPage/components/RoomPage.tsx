@@ -3,7 +3,7 @@ import styles from "./styles/RoomPage.module.css";
 import { Attendee } from "../../../types";
 import BottomMenu from "./BottomMenu";
 import AttendeeCard from "./AttendeeCard";
-import Grid from "@mui/material/Grid";
+import { useAppSelector } from "../../../redux/hooks";
 
 export default function RoomPageComponent({
   attendees,
@@ -13,6 +13,8 @@ export default function RoomPageComponent({
   roomName,
   isCameraOn,
   setIsCameraOn,
+  localStream,
+  remoteStream,
 }: {
   attendees: Attendee[];
   isMicrophoneOn: boolean;
@@ -21,18 +23,32 @@ export default function RoomPageComponent({
   roomName: string;
   isCameraOn: boolean;
   setIsCameraOn: (value: boolean) => void;
+  localStream: MediaStream | undefined;
+  remoteStream: MediaStream | undefined;
 }) {
+  const { profile } = useAppSelector((state) => state.profile);
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.container}>
-        <div className={styles.attendeesContainer}>
-          <Grid container spacing={8} direction={"row"}>
-            {attendees.map((attendee, index) => (
-              <Grid key={index} item xs={12} md={6} lg={4}>
-                <AttendeeCard attendee={attendee} />
-              </Grid>
-            ))}
-          </Grid>
+        <div className={styles.topContainer}>
+          <div className={styles.attendeesContainer}>
+            {attendees.map((attendee, index) => {
+              return profile.displayName === attendee.userName ? (
+                <AttendeeCard
+                  key={index}
+                  attendee={attendee}
+                  stream={localStream}
+                />
+              ) : (
+                <AttendeeCard
+                  key={index}
+                  attendee={attendee}
+                  stream={remoteStream}
+                />
+              );
+            })}
+          </div>
         </div>
         <BottomMenu
           isMicrophoneOn={isMicrophoneOn}
