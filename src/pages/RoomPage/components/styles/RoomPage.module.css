@@ -33,3 +33,11 @@
   margin: auto;
 }
 
+.whiteBoardContainer{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}

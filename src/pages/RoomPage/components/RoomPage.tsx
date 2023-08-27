@@ -4,6 +4,7 @@ import { Attendee } from "../../../types";
 import BottomMenu from "./BottomMenu";
 import AttendeeCard from "./AttendeeCard";
 import { useAppSelector } from "../../../redux/hooks";
+import WhiteBoard from "./WhiteBoard";
 
 export default function RoomPageComponent({
   attendees,
@@ -15,6 +16,12 @@ export default function RoomPageComponent({
   setIsCameraOn,
   localStream,
   remoteStream,
+  setIsWhiteBoardOn,
+  isWhiteBoardOn,
+  sendMessageCallback,
+  pc,
+  dataChannel,
+  receivedMessages,
 }: {
   attendees: Attendee[];
   isMicrophoneOn: boolean;
@@ -25,14 +32,36 @@ export default function RoomPageComponent({
   setIsCameraOn: (value: boolean) => void;
   localStream: MediaStream | undefined;
   remoteStream: MediaStream | undefined;
+  setIsWhiteBoardOn: (value: boolean) => void;
+  isWhiteBoardOn: boolean;
+  sendMessageCallback: (message: any) => void;
+  pc: RTCPeerConnection;
+  dataChannel: RTCDataChannel | null;
+  receivedMessages: string;
 }) {
   const { profile } = useAppSelector((state) => state.profile);
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.container}>
-        <div className={styles.topContainer}>
-          <div className={styles.attendeesContainer}>
+        <div
+          className={styles.topContainer}
+          style={isWhiteBoardOn ? { gap: 10 } : {}}
+        >
+          {isWhiteBoardOn && (
+            <div />
+            // <WhiteBoard
+            //   receivedMessages={receivedMessages}
+            //   pc={pc}
+            //   dataChannel={dataChannel}
+            // />
+          )}
+          <div
+            className={styles.attendeesContainer}
+            style={
+              isWhiteBoardOn ? { height: "100%", flexDirection: "column" } : {}
+            }
+          >
             {attendees.map((attendee, index) => {
               return profile.displayName === attendee.userName ? (
                 <AttendeeCard
@@ -57,6 +86,8 @@ export default function RoomPageComponent({
           roomName={roomName}
           isCameraOn={isCameraOn}
           setIsCameraOn={setIsCameraOn}
+          isWhiteBoardOn={isWhiteBoardOn}
+          setIsWhiteBoardOn={setIsWhiteBoardOn}
         />
       </div>
     </div>

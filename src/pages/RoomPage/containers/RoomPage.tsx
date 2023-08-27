@@ -3,6 +3,7 @@ import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import {
   AppState,
   BinaryFiles,
+  ExcalidrawAPIRefValue,
   ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types/types";
 import {
@@ -23,7 +24,7 @@ import servers from "../../../webRTCConfig";
 import { Attendee } from "../../../types";
 import RoomPageComponent from "../components/RoomPage";
 
-const pc = new RTCPeerConnection(servers);
+let pc = new RTCPeerConnection(servers);
 
 export default function RoomPage() {
   const [attendees, setAttendees] = useState<Attendee[]>([]);
@@ -38,9 +39,13 @@ export default function RoomPage() {
   const state = useLocation();
   const localRef = useRef<HTMLVideoElement | null>(null);
   const remoteRef = useRef<HTMLVideoElement | null>(null);
-
+  const [receivedMessages, setReceivedMessages] = useState<string>("");
+  const navigate = useNavigate();
+  const [isWhiteBoardOn, setIsWhiteBoardOn] = useState(false);
   const roomId = state.pathname.substring(35, 55);
   const { profile } = useAppSelector((state) => state.profile);
+  const [dataChannelActive, setDataChannelActive] =
+    useState<RTCDataChannel | null>(null);
   const roomDoc = doc(
     db,
     "users",
@@ -51,8 +56,15 @@ export default function RoomPage() {
     state.state.lesson.id
   );
   const attendeesDbRef = collection(roomDoc, "attendees");
+  const callDocRef = doc(roomDoc, "calls", "call1");
+  const excalidrawRef = useRef<ExcalidrawImperativeAPI>(null);
+
   useEffect(() => {
     const requestAudioAndVideo = async () => {
+      if (pc.signalingState === "closed") {
+        pc.close();
+        pc = new RTCPeerConnection();
+      }
       await navigator.mediaDevices
         .getUserMedia({
           audio: true,
@@ -69,6 +81,29 @@ export default function RoomPage() {
             pc.addTrack(track, stream);
           });
           const remoteStreamMedia = new MediaStream();
+          const dataChannel = pc.createDataChannel("messages");
+
+          pc.ondatachannel = (event) => {
+            const receiveDataChannel = event.channel;
+            receiveDataChannel.onmessage = (event) => {
+              const message = JSON.parse(event.data);
+
+              if (excalidrawRef.current) {
+                if (message.sendBy !== profile.uid) {
+                  // console.log(`recieve data`);
+                  // console.log(message.message);
+                  setComingFromListen(true);
+                  excalidrawRef.current.updateScene({
+                    elements: JSON.parse(message.message),
+                  });
+                }
+              }
+            };
+          };
+          setDataChannelActive(dataChannel);
+          if (dataChannel) {
+            console.log(`dsadasd`);
+          }
           pc.ontrack = (event) => {
             event.streams[0].getTracks().forEach((track) => {
               remoteStreamMedia.addTrack(track);
@@ -80,7 +115,7 @@ export default function RoomPage() {
           }
           if (remoteRef.current)
             remoteRef.current.srcObject = remoteStreamMedia;
-          const callDocRef = doc(roomDoc, "calls", "call1");
+
           const callDoc = await getDoc(callDocRef);
           if (!callDoc.exists()) {
             const offerCandidatesRef = collection(
@@ -178,11 +213,15 @@ export default function RoomPage() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const navigate = useNavigate();
+  console.log(dataChannelActive);
   const hangUp = async () => {
     pc.close();
+    if (localRef.current) localRef.current.srcObject = null;
+    localStream?.getTracks().forEach((track) => track.stop());
 
+    if (remoteRef.current) remoteRef.current.srcObject = null;
+    remoteStream?.getTracks().forEach((track) => track.stop());
+    await deleteDoc(callDocRef);
     await deleteDoc(doc(attendeesDbRef, state.state.yourAttendeeId));
 
     navigate(`/lessons`, {
@@ -215,9 +254,86 @@ export default function RoomPage() {
     videoTrack.enabled = !videoTrack.enabled;
     setIsCameraOn(videoTrack.enabled);
   };
+  const [comingFromListen, setComingFromListen] = useState(false);
+
+  const sendMessage = (message: string) => {
+    const messageData = {
+      message,
+      sendBy: profile.uid,
+    };
+    if (comingFromListen) {
+      setComingFromListen(false);
+      return;
+    }
+    console.log(`send data`);
+    if (pc.signalingState === "stable") {
+      if (dataChannelActive) {
+        if (dataChannelActive.readyState === "open") {
+          dataChannelActive.send(JSON.stringify(messageData));
+          console.log("message sent");
+        }
+      }
+    }
+  };
+  const [currentElements, setCurrentElements] = useState<ExcalidrawElement[]>(
+    []
+  );
+  const [excalidrawAPI, setExcalidrawAPI] =
+    useState<ExcalidrawAPIRefValue | null>(null);
+  const sendMessageCallback = (message: any) => {
+    console.log(message);
+  };
+  const handleChange = async (
+    elements: readonly ExcalidrawElement[],
+    appState: AppState,
+    files: BinaryFiles
+  ) => {
+    if (appState.cursorButton === "up") {
+      if (areObjectsEqual(elements, currentElements)) {
+        return;
+      }
+    } else {
+      if (appState.activeTool.type === "hand") {
+        return;
+      }
+    }
+    setCurrentElements(elements as ExcalidrawElement[]);
+    if (elements.length === 0) return;
+
+    if (dataChannelActive) {
+      sendMessage(JSON.stringify(elements));
+    }
+  };
+
   return (
-    <div>
+    <div style={{ width: "100%" }}>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          zIndex: 10,
+        }}
+      >
+        <Excalidraw
+          ref={excalidrawRef}
+          //initialData={{ elements: JSON.parse(initialData ?? "[]") }}
+          onChange={handleChange}
+          UIOptions={{
+            canvasActions: {
+              changeViewBackgroundColor: false,
+              clearCanvas: false,
+              export: false,
+              loadScene: false,
+              saveToActiveFile: false,
+              toggleTheme: null,
+              saveAsImage: false,
+            },
+          }}
+        ></Excalidraw>
+      </div>
       <RoomPageComponent
+        pc={pc}
         localStream={localStream}
         remoteStream={remoteStream}
         attendees={attendees}
@@ -227,6 +343,11 @@ export default function RoomPage() {
         roomName={state.state.lesson.roomName}
         isCameraOn={isCameraOn}
         setIsCameraOn={handleCameraClick}
+        isWhiteBoardOn={isWhiteBoardOn}
+        setIsWhiteBoardOn={setIsWhiteBoardOn}
+        sendMessageCallback={sendMessageCallback}
+        dataChannel={dataChannelActive}
+        receivedMessages={receivedMessages}
       />
     </div>
   );

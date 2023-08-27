@@ -1,10 +1,8 @@
-import ArrowLeft from "../../../components/Icons/ArrowLeft";
 import React from "react";
 import MicrophoneOff from "../../../components/Icons/MicrophoneOff";
 import MicrophoneOn from "../../../components/Icons/MicrophoneOn";
 import styles from "./styles/BottomMenu.module.css";
-import { VideocamOff, Videocam, CallEnd } from "@mui/icons-material";
-import { render } from "@testing-library/react";
+import { VideocamOff, Videocam, CallEnd, NoteAlt } from "@mui/icons-material";
 export default function BottomMenu({
   isMicrophoneOn,
   setIsMicrophoneOn,
@@ -12,6 +10,8 @@ export default function BottomMenu({
   roomName,
   isCameraOn,
   setIsCameraOn,
+  setIsWhiteBoardOn,
+  isWhiteBoardOn,
 }: {
   isMicrophoneOn: boolean;
   setIsMicrophoneOn: (value: boolean) => void;
@@ -19,6 +19,8 @@ export default function BottomMenu({
   roomName: string;
   isCameraOn: boolean;
   setIsCameraOn: (value: boolean) => void;
+  setIsWhiteBoardOn: (value: boolean) => void;
+  isWhiteBoardOn: boolean;
 }) {
   const renderIcon = ({
     isOn,
@@ -61,6 +63,12 @@ export default function BottomMenu({
           onPress: () => setIsCameraOn(!isCameraOn),
           iconOn: <Videocam htmlColor="white" />,
           iconOff: <VideocamOff htmlColor="white" />,
+        })}
+        {renderIcon({
+          isOn: isWhiteBoardOn,
+          onPress: () => setIsWhiteBoardOn(!isWhiteBoardOn),
+          iconOff: <NoteAlt htmlColor="white" />,
+          iconOn: <NoteAlt htmlColor="white" />,
         })}
         {renderIcon({
           isOn: false,
